@@ -1,0 +1,41 @@
+# Secrets — never commit these
+.env
+.env.*
+!.env.example
+*.token.json
+token.json
+credentials.json
+
+# etsyotomasyon local state (tokens live here by default)
+.etsyotomasyon/
+
+# Working data — a seller's own exports.
+#
+# `orders pull` writes buyer names, email addresses, postal addresses and gift
+# messages. The README tells people to clone this repo and run commands inside it,
+# so an un-ignored export is one `git add .` away from publishing a customer list.
+# Ignore every CSV by default and re-include only the shipped examples.
+*.csv
+!examples/*.csv
+*.log
+out/
+exports/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+env/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,3 @@
+receipt_id,tracking_code,carrier_name,note_to_buyer,send_bcc
+3021456789,1Z999AA10123456784,ups,Thanks for your order! It is on its way.,false
+3021456790,CJ123456789TR,ptt,,false

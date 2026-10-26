@@ -1,0 +1,88 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "etsyotomasyon"
+version = "0.3.3"
+description = "Open-source Etsy seller automation that runs on your own computer: a local web app in your browser plus a CLI for drafts from your designs, bulk listings, orders and tracking, SEO and profit, via the official Etsy Open API v3."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+keywords = ["etsy", "ecommerce", "automation", "cli", "web-ui", "seo", "print-on-demand"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Natural Language :: Turkish",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: JavaScript",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Office/Business",
+]
+dependencies = [
+    "httpx>=0.27",
+    "typer>=0.12",
+    "rich>=13.7",
+    "python-dotenv>=1.0",
+    # Mockup compositing. Ships prebuilt wheels for Windows, macOS (Intel + ARM) and
+    # Linux with no compiler needed - which is the whole reason the image half is
+    # Python rather than a Node/Sharp sidecar.
+    "pillow>=10.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.5"]
+heic = ["pillow-heif>=0.16"]
+
+[project.urls]
+Homepage = "https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2"
+Issues = "https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/issues"
+Changelog = "https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/blob/main/CHANGELOG.md"
+
+[project.scripts]
+etsyotomasyon = "etsyotomasyon.cli:main"
+
+# The same app started without a console window behind it on Windows: it serves the
+# web UI on localhost and opens the browser, exactly like `etsyotomasyon desktop`.
+[project.gui-scripts]
+etsyotomasyon-desktop = "etsyotomasyon.desktop:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["etsyotomasyon"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# Typer's API is built on both of these:
+#   B008  - typer.Option()/Argument() must be evaluated in the default, that is the contract.
+#   UP045 - Typer resolves annotations at runtime; `X | None` breaks that on Python 3.9
+#           even with `from __future__ import annotations`, so Optional[X] stays.
+"etsyotomasyon/cli.py" = ["B008", "UP045"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Capture at the Python level, not by swapping file descriptors (kept from the Tk
+# window's tests, where the fd swap made Tcl fail intermittently on Windows). No
+# test here reads captured output via capfd.
+addopts = "--capture=sys"
+# A test stuck for two minutes prints every thread's stack, so a hang on a CI
+# runner says where it is instead of only timing out.
+faulthandler_timeout = 120

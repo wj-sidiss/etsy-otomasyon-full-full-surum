@@ -1,0 +1,748 @@
+/* Pinterest (/pinterest): setup, queue builder, account / boards / schedule, queue. */
+
+.page-pinterest {
+  gap: 16px;
+}
+.page-pinterest .pin-note-slot:empty,
+.page-pinterest .pin-kpi-slot:empty,
+.page-pinterest .pin-queue-slot:empty {
+  display: none;
+}
+
+/* ---------------------------------------------------------------- layout */
+
+.pin-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.pin-side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.pin-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+.pin-kpis .stat {
+  padding: 14px 16px 12px;
+}
+.pin-kpis .stat-head {
+  margin-bottom: 6px;
+}
+.pin-kpis .stat-value {
+  font-size: 24px;
+}
+.pin-kpis .stat-sub {
+  font-weight: 500;
+  font-size: 12px;
+}
+.pin-kpis .stat.is-alert .stat-value {
+  color: var(--warning);
+}
+
+/* ---------------------------------------------------------------- setup card */
+
+.pin-setup-card .card-title {
+  font-size: 19px;
+}
+.pin-setup-card .card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.pin-steps {
+  display: flex;
+  flex-direction: column;
+}
+.pin-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 14px;
+  padding-bottom: 20px;
+}
+.pin-step:last-child {
+  padding-bottom: 0;
+}
+.pin-step:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 13.5px;
+  top: 32px;
+  bottom: 4px;
+  width: 1px;
+  background: var(--border-2);
+}
+.pin-step-num {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-2);
+  background: var(--panel-2);
+  color: var(--text-2);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+.pin-step-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  padding-top: 3px;
+}
+.pin-step-body > * {
+  max-width: 100%;
+}
+.pin-step-body .copy-field,
+.pin-step-body .pin-form,
+.pin-step-body .pin-connect,
+.pin-step-body .pin-scopes {
+  align-self: stretch;
+}
+.pin-step-title {
+  font-size: 14.5px;
+  font-weight: 600;
+}
+.pin-step-text {
+  font-size: 13px;
+  color: var(--text-2);
+}
+.pin-ext {
+  text-decoration: none;
+}
+.pin-ext:hover {
+  text-decoration: none;
+}
+.pin-scopes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  margin-bottom: 4px;
+}
+.pin-scopes li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.pin-scope-check {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+/* How it works */
+.pin-how {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pin-how li {
+  display: flex;
+  gap: 12px;
+}
+.pin-how-title {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.pin-how-text {
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+/* ---------------------------------------------------------------- app form */
+
+.pin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pin-form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.pin-form.is-compact .pin-form-row {
+  grid-template-columns: minmax(0, 1fr);
+}
+.pin-secret {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 4px;
+  border: 1px solid var(--border-2);
+  border-radius: 10px;
+  background: var(--panel);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.pin-secret:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 108, 246, 0.18);
+}
+.pin-secret .input {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.pin-secret .input:focus {
+  box-shadow: none;
+}
+.pin-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.pin-saved {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  color: var(--success);
+}
+
+.pin-advanced {
+  border-radius: var(--radius-sm);
+}
+.pin-advanced > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  list-style: none;
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-2);
+  user-select: none;
+}
+.pin-advanced > summary::-webkit-details-marker {
+  display: none;
+}
+.pin-advanced > summary svg {
+  transition: transform 0.15s;
+}
+.pin-advanced[open] > summary svg {
+  transform: rotate(90deg);
+}
+.pin-advanced > summary:hover {
+  color: var(--text);
+}
+.pin-advanced-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 10px 0 2px;
+}
+
+/* ---------------------------------------------------------------- connect */
+
+.pin-connect-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.pin-connect-sub {
+  font-size: 12.5px;
+}
+.pin-connect-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+.pin-connecting {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+.pin-connecting-text {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  flex: 1;
+  min-width: 200px;
+  max-width: 320px;
+  font-size: 12.5px;
+  color: var(--text-2);
+}
+.pin-connecting-links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.pin-connecting-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.pin-link-btn {
+  color: var(--muted);
+  font-size: 12.5px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.pin-link-btn:hover {
+  color: var(--text);
+}
+
+/* ---------------------------------------------------------------- account, boards, schedule */
+
+.pin-account-badges {
+  display: inline-flex;
+  gap: 6px;
+}
+.pin-account {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.pin-dl {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px 14px;
+  margin: 0;
+  font-size: 13px;
+}
+.pin-dl dt {
+  color: var(--muted);
+}
+.pin-dl dd {
+  margin: 0;
+  color: var(--text);
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pin-account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pin-account-connect:not(:empty) {
+  margin-top: 14px;
+}
+.pin-app-details {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.btn.pin-danger-ghost {
+  color: var(--danger);
+}
+.btn.pin-danger-ghost:hover:not(:disabled) {
+  background: var(--danger-soft);
+}
+
+.pin-board-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 280px;
+  overflow: auto;
+  margin: 0 -4px;
+  padding: 0 4px;
+}
+.pin-board {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+.pin-board:hover {
+  border-color: var(--border-2);
+  background: var(--panel-3);
+}
+.pin-board.is-default {
+  border-color: rgba(124, 108, 246, 0.6);
+  background: linear-gradient(135deg, rgba(124, 108, 246, 0.16), rgba(124, 108, 246, 0.04)), var(--panel-2);
+}
+.pin-board-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.pin-board-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pin-board-meta {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.pin-schedule-card .card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pin-schedule-text {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+.pin-howto-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 0 0 20px;
+  list-style: decimal;
+  font-size: 12.5px;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+.pin-howto-steps li::marker {
+  color: var(--muted);
+  font-weight: 600;
+}
+.pin-howto-steps .copy-field {
+  margin-top: 6px;
+}
+.pin-howto-kv {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+  margin-top: 6px;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+.pin-howto-kv .copy-field {
+  margin: 0 0 4px;
+}
+
+/* ---------------------------------------------------------------- queue builder */
+
+.pin-builder {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.pin-pick-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.pin-pick-toolbar .search {
+  /* wide enough for the whole placeholder ("Search title or listing number"); the
+     "select shown" box wraps to the next line before the field gets narrower */
+  flex: 1 1 260px;
+  max-width: 340px;
+}
+.pin-pick-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 330px;
+  overflow: auto;
+  margin: 0 -6px;
+  padding: 2px 6px;
+}
+.pin-pick {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px 8px 10px;
+  border-radius: 11px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+.pin-pick:hover {
+  border-color: var(--border-2);
+  background: var(--panel-3);
+}
+.pin-pick.is-picked {
+  border-color: rgba(124, 108, 246, 0.55);
+  background: linear-gradient(90deg, rgba(124, 108, 246, 0.12), rgba(124, 108, 246, 0.02)), var(--panel-2);
+}
+.pin-pick.is-skel {
+  cursor: default;
+}
+.pin-pick-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.pin-pick-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pin-pick-meta {
+  font-size: 12px;
+  color: var(--muted);
+}
+.pin-pick-more {
+  padding: 6px 2px 0;
+  font-size: 12px;
+  text-align: center;
+}
+.pin-pick-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.pin-form-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+.pin-form-grid .select {
+  display: flex;
+  width: 100%;
+}
+.pin-pick-foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.pin-pick-count {
+  font-size: 13px;
+  color: var(--muted);
+}
+.pin-pick-count.is-on {
+  color: var(--accent-2);
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------- preview modal */
+
+.pin-preview-modal .modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pin-problems {
+  margin-top: 4px;
+  padding-left: 16px;
+  list-style: disc;
+  font-size: 12.5px;
+}
+.pin-problems li {
+  margin-top: 2px;
+}
+.pin-preview-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 16px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+}
+.pin-sum {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.pin-sum-label {
+  flex: none;
+}
+.pin-sum-value {
+  flex: 1;
+  min-width: 0;
+  color: var(--text);
+  font-weight: 600;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pin-preview-list {
+  max-height: 320px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.pin-preview-list .tbl-wrap {
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+}
+.pin-preview-list .tbl td {
+  padding: 8px 12px;
+}
+
+/* ---------------------------------------------------------------- queue */
+
+.pin-queue-card {
+  padding-bottom: 16px;
+}
+.pin-queue-card .card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pin-queue-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.pin-bulk {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pin-bulk-count {
+  font-size: 12.5px;
+  color: var(--accent-2);
+  font-weight: 600;
+}
+.pin-post-progress:empty {
+  display: none;
+}
+.pin-progress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(124, 108, 246, 0.35);
+  background: var(--accent-soft);
+}
+.pin-progress-text {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+.pin-queue-table {
+  margin: 0 -20px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.pin-queue-table > .note {
+  margin: 12px 20px;
+}
+.pin-queue-table > .skeleton-group {
+  padding: 16px 20px;
+}
+.pin-queue-table .tbl th:first-child,
+.pin-queue-table .tbl td:first-child {
+  padding-left: 20px;
+}
+.pin-queue-table .tbl th:last-child,
+.pin-queue-table .tbl td:last-child {
+  padding-right: 20px;
+}
+.pin-queue-table .tbl td {
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+.pin-cell-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.pin-board-cell {
+  display: block;
+  color: var(--text-2);
+}
+.pin-due {
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.pin-due.is-today {
+  color: var(--accent-2);
+  font-weight: 600;
+}
+.pin-row-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.pin-row-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+}
+.tbl tbody tr.is-uncertain td:first-child {
+  box-shadow: inset 2px 0 0 var(--warning);
+}
+.tbl tbody tr.is-failed td:first-child {
+  box-shadow: inset 2px 0 0 var(--danger);
+}
+.pin-pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12.5px;
+}
+
+/* ---------------------------------------------------------------- narrower windows */
+
+@media (max-width: 1280px) {
+  .pin-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .pin-form-grid > .field:first-child {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 1100px) {
+  .pin-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pin-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  .pin-form-row,
+  .pin-scopes,
+  .pin-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -1,0 +1,129 @@
+name: Release
+
+# Pushing a version tag (v0.2.0) builds the desktop app on GitHub's own Windows and
+# macOS machines, proves each packaged app starts, and publishes both to a GitHub
+# Release. Building here rather than on a laptop keeps every published binary free
+# of anyone's local paths or user name, and reproducible from the tagged source.
+#
+# A pull request that touches the app builds both too, without publishing, so a
+# packaging break is caught before it can reach a tag. Run it by hand (Actions →
+# Release → Run workflow) to get the builds as artifacts, also without publishing.
+
+on:
+  push:
+    tags: ["v*"]
+  pull_request:
+    paths:
+      - "etsyotomasyon/**"
+      - "packaging/**"
+      - "pyproject.toml"
+      - ".github/workflows/release.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        # macos-latest is Apple Silicon; macos-15-intel builds for Intel Macs.
+        os: [windows-latest, macos-latest, macos-15-intel]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]" "pyinstaller>=6.10,<7"
+
+      - name: Test
+        # ~1,500 tests, about 5 minutes on a laptop; hosted runners can take twice that.
+        timeout-minutes: 25
+        run: pytest -q
+
+      - name: Tag matches the package version
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          version=$(python -c "import etsyotomasyon; print(etsyotomasyon.__version__)")
+          test "v$version" = "$GITHUB_REF_NAME" || { echo "Tag $GITHUB_REF_NAME but package is $version"; exit 1; }
+
+      - name: Build
+        run: python packaging/build.py
+
+      # The packaged app is a different program from the source tree: a module or
+      # data file PyInstaller missed only shows up here. --self-test imports every
+      # command, starts the web server and fetches every file of the web UI from it;
+      # the dry run exercises the CLI path.
+      - name: Check the packaged app (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $exe = (Get-ChildItem dist/release/*.exe | Select-Object -First 1).FullName
+          foreach ($run in @(@('--self-test'), @('listings', 'push', 'examples/listings.csv', '--dry-run'))) {
+            $p = Start-Process -FilePath $exe -ArgumentList $run -NoNewWindow -PassThru
+            $null = $p.Handle  # keeps ExitCode readable after the process ends
+            if (-not $p.WaitForExit(300000)) {
+              Stop-Process -Id $p.Id -Force
+              throw "etsyotomasyon $run did not finish in 5 minutes"
+            }
+            Get-Content "$env:USERPROFILE/.etsyotomasyon/logs/*.log" -ErrorAction SilentlyContinue
+            if ($p.ExitCode -ne 0) { throw "etsyotomasyon $run exited with $($p.ExitCode)" }
+          }
+
+      - name: Check the packaged app (macOS)
+        if: runner.os == 'macOS'
+        timeout-minutes: 5
+        run: |
+          app=dist/etsyotomasyon.app/Contents/MacOS/etsyotomasyon
+          "$app" --self-test
+          "$app" listings push examples/listings.csv --dry-run
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: etsyotomasyon-${{ matrix.os }}
+          path: dist/release/*
+          if-no-files-found: error
+
+  publish:
+    name: Publish
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          path: release
+          merge-multiple: true
+
+      # A release may already exist, published by hand with one platform's build
+      # while the other was being fixed: then add the files to it rather than fail.
+      - name: Create or complete the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ls -la release
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" release/* --clobber
+            gh release edit "$GITHUB_REF_NAME" --notes-file packaging/RELEASE_NOTES.md
+          else
+            gh release create "$GITHUB_REF_NAME" release/* \
+              --title "etsyotomasyon $GITHUB_REF_NAME" \
+              --notes-file packaging/RELEASE_NOTES.md
+          fi

@@ -1,0 +1,36 @@
+name: Feature request
+description: Suggest something etsyotomasyon should be able to do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: Describe the actual shop task, not just the feature. It often changes the answer.
+      placeholder: I have 300 listings and need to raise every price by 10% before the holidays.
+    validations:
+      required: true
+
+  - type: textarea
+    id: today
+    attributes:
+      label: How do you do it today?
+      description: Manually in Etsy, another tool, a spreadsheet, not at all?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you want etsyotomasyon to do?
+      description: A command line, if you can picture one.
+      placeholder: etsyotomasyon listings reprice --percent 10 --section 12345
+
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Constraints this project keeps
+      description: Requests that need one of these broken are unlikely to be accepted.
+      options:
+        - label: This can be done through the official Etsy Open API v3 (no scraping, no browser automation)
+        - label: This does not require inventing numbers Etsy does not publish, such as search volume

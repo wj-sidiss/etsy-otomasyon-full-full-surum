@@ -1,0 +1,848 @@
+/* Siparişler (/siparisler) - frame t280. Scoped under .page-orders. */
+
+.page-orders {
+  gap: 16px;
+}
+
+/* ---- toolbar: tabs, the status pill, search (t280) */
+
+.page-orders .o-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.page-orders .o-bar > .spacer {
+  flex: 1 1 0;
+}
+.page-orders .o-bar > .tabs {
+  flex: none;
+}
+.page-orders .o-bar .tab {
+  white-space: nowrap;
+}
+.o-country-menu {
+  max-height: min(440px, 70vh);
+  overflow-y: auto;
+}
+.page-orders .o-search {
+  flex: 0 1 264px;
+  width: 264px;
+  min-width: 160px;
+  height: 35px;
+}
+.page-orders .o-search .kbd {
+  display: none;
+}
+
+/* The pill left of the search box: "✓ 12 sipariş seçili" (accent), the upload's
+   progress (panel), "12/12 ... yüklendi" (mint) or a partial upload (amber). */
+.page-orders .o-pill {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 36px;
+  padding: 0 15px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text-2);
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.page-orders .o-pill > .icon {
+  flex: none;
+}
+.page-orders .o-pill.is-selected {
+  gap: 8px;
+  background: var(--accent-soft);
+  border-color: rgba(124, 108, 246, 0.3);
+  color: var(--accent-2);
+}
+.page-orders .o-pill.is-done {
+  background: var(--success-soft);
+  border-color: rgba(52, 211, 153, 0.34);
+  color: var(--success);
+  font-weight: 600;
+}
+.page-orders .o-pill.is-partial {
+  background: var(--warning-soft);
+  border-color: rgba(245, 181, 68, 0.34);
+  color: var(--warning);
+  font-weight: 600;
+}
+.page-orders .o-pill.is-progress {
+  gap: 11px;
+}
+/* Stop joins the pill once a send has run a moment (orders.js STOP_AFTER_MS). */
+.page-orders .o-pill.is-progress.has-stop {
+  padding-right: 8px;
+}
+.page-orders .o-pill-spin {
+  display: inline-grid;
+  flex: none;
+  color: var(--accent-2);
+  animation: o-turn 1.1s linear infinite; /* stopped by the reduced-motion rule */
+}
+@keyframes o-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.page-orders .o-pill .progress {
+  flex: none;
+  width: 123px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.07);
+}
+.page-orders .o-pill .progress-fill {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+.page-orders .o-pill-count {
+  min-width: 40px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.page-orders .o-pill-stop.btn-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  color: var(--muted);
+}
+.page-orders .o-alerts:empty {
+  display: none;
+}
+.page-orders .o-alerts .note-action .btn {
+  gap: 6px;
+  text-decoration: none;
+}
+
+/* ---- header (outside .page-orders): "CSV içe aktar" is the video's ghost button (a thin
+   border, dim text); the upload button keeps its colour while Etsy works (aria-disabled). */
+
+.btn-ghost.o-csv {
+  border-color: var(--border);
+}
+.btn-ghost.o-csv:hover:not(:disabled) {
+  border-color: var(--border-2);
+}
+.btn-primary.o-send[aria-disabled="true"] {
+  cursor: default;
+}
+.btn-primary.o-send[aria-disabled="true"]:active {
+  transform: none;
+}
+
+/* ---- the table */
+
+.page-orders .o-card {
+  overflow: hidden;
+}
+/* The column heads keep the table's lighter band (--panel-2, the video's panel2). */
+.page-orders .o-table .tbl th {
+  height: 44px;
+}
+.page-orders .o-table .tbl .tbl-check {
+  padding-left: 18px;
+}
+.page-orders .o-table .tbl td {
+  height: 57px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+/* A ticked box wears the video's soft violet ring. */
+.page-orders .checkbox:checked {
+  box-shadow: 0 0 0 3px rgba(123, 108, 255, 0.18);
+}
+/* "Select all" ticks the rows one after another, top to bottom (the video's 0.4 s): each
+   row's box, tick and violet band wait for --tick-delay (negative once a re-render
+   happens mid-way, so the cascade carries on instead of starting over). */
+.page-orders .o-table tbody tr.is-cascade.is-selected {
+  animation: o-tick-row 150ms var(--ease) var(--tick-delay, 0ms) backwards;
+}
+.page-orders .o-table tbody tr.is-cascade.is-selected td:first-child {
+  animation: o-tick-band 150ms var(--ease) var(--tick-delay, 0ms) backwards;
+}
+.page-orders tr.is-cascade .checkbox:checked {
+  animation: o-tick-box 150ms var(--ease) var(--tick-delay, 0ms) backwards;
+}
+.page-orders tr.is-cascade .checkbox:checked::after {
+  animation: o-tick-mark 150ms var(--ease) var(--tick-delay, 0ms) backwards;
+}
+@keyframes o-tick-row {
+  from {
+    background-color: transparent;
+  }
+}
+@keyframes o-tick-band {
+  from {
+    box-shadow: none;
+  }
+}
+@keyframes o-tick-box {
+  from {
+    background-color: transparent;
+    border-color: #454957;
+    box-shadow: none;
+  }
+}
+@keyframes o-tick-mark {
+  from {
+    opacity: 0;
+    transform: rotate(-45deg) scale(0.4);
+  }
+}
+/* The shared reduced-motion rule shortens durations, not delays: no cascade at all. */
+@media (prefers-reduced-motion: reduce) {
+  .page-orders tr.is-cascade,
+  .page-orders tr.is-cascade td,
+  .page-orders tr.is-cascade .checkbox,
+  .page-orders tr.is-cascade .checkbox::after {
+    animation: none !important;
+  }
+}
+.page-orders .o-table .tbl-skel td {
+  height: 57px;
+}
+.page-orders .o-table tbody tr.is-error td:first-child {
+  box-shadow: inset 2px 0 0 var(--danger);
+}
+.page-orders .o-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+/* The order number is set in the mono face, semibold (the video's JetBrains Mono 600).
+   13.5 px while the fonts are not bundled: the Consolas fallback runs small at 13.2. */
+.page-orders .o-no {
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 13.2px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+.page-orders .o-name {
+  color: var(--text);
+  font-weight: 600;
+}
+.page-orders .o-sub {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+.page-orders .o-date {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.page-orders .o-gift {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--accent-soft);
+  color: var(--accent-2);
+  font-size: 10.5px;
+  font-weight: 600;
+  vertical-align: 1px;
+}
+.page-orders .o-product {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.page-orders .o-product .thumb {
+  border-radius: 8px;
+  background: #eceae4;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #8b8f99;
+}
+.page-orders .o-title {
+  color: var(--text);
+  font-weight: 500;
+}
+.page-orders .o-title-link {
+  display: block;
+}
+.page-orders .o-title-link:hover {
+  color: var(--accent-2);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.page-orders .o-variant {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.page-orders .o-more {
+  flex: none;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--panel-3);
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 600;
+}
+.page-orders .o-total {
+  color: var(--text);
+  font-size: 13.2px;
+  font-weight: 600;
+}
+
+/* carrier pill: static after shipping, a select while waiting. A carrier already chosen
+   looks like the shipped pill (t280): no chevron until pointed at or focused. */
+.page-orders .o-carrier {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  height: 25px;
+  padding: 0 10px;
+  border-radius: 7px;
+  border: 1px solid var(--border-2);
+  background: var(--panel-2);
+  color: var(--text-2);
+  font-size: 11.9px;
+  font-weight: 600;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.page-orders .o-carrier > .icon {
+  flex: none;
+  color: var(--muted);
+}
+.page-orders .o-carrier-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.page-orders .o-td-carrier {
+  padding-right: 10px;
+}
+.page-orders .o-carrier.is-edit {
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, padding 0.15s;
+}
+.page-orders .o-carrier.is-edit.is-empty,
+.page-orders .o-carrier.is-edit:hover:not(:has(:disabled)),
+.page-orders .o-carrier.is-edit:focus-within {
+  padding-right: 24px;
+}
+.page-orders .o-carrier.is-edit.is-empty {
+  width: 100%;
+}
+.page-orders .o-carrier.is-edit:hover:not(:has(:disabled)) {
+  border-color: #3a3e4a;
+}
+.page-orders .o-carrier.is-edit:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 108, 246, 0.18);
+}
+.page-orders .o-carrier-select {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text-2);
+  font: inherit;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  /* As wide as the carrier chosen (browsers without it: as wide as the longest one). */
+  field-sizing: content;
+}
+.page-orders .o-carrier-select:focus {
+  color: var(--text);
+}
+.page-orders .o-carrier-select option {
+  background: var(--panel-2);
+  color: var(--text);
+}
+.page-orders .o-carrier-select:disabled {
+  cursor: default;
+  color: var(--text-2);
+}
+.page-orders .o-chev {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-grid;
+  color: var(--muted);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.page-orders .o-carrier.is-empty .o-chev,
+.page-orders .o-carrier.is-edit:hover:not(:has(:disabled)) .o-chev,
+.page-orders .o-carrier.is-edit:focus-within .o-chev {
+  opacity: 1;
+}
+.page-orders .o-carrier.is-empty {
+  border-style: dashed;
+}
+.page-orders .o-carrier.is-empty .o-carrier-select {
+  color: var(--muted);
+}
+.page-orders .o-carrier.is-bad {
+  border-color: rgba(240, 107, 107, 0.6);
+}
+.page-orders .o-carrier.is-bad .o-carrier-select,
+.page-orders .o-carrier.is-bad > .icon {
+  color: var(--danger);
+}
+
+/* tracking number: ✓ + code once uploaded, an input while waiting. The code lines up
+   with the column head and with the number typed in; the ✓ hangs to its left (t280).
+   It may also use the cell's right padding, so a 22-digit USPS number stays whole
+   beside its ✓ at the video's width, as in the video. */
+.page-orders .o-table .tbl th.o-th-tracking {
+  padding-left: 25px;
+}
+/* The code shortens itself (…) when the column is too narrow; the cell adds none. */
+.page-orders .o-table .tbl td.o-td-tracking {
+  text-overflow: clip;
+}
+.page-orders .o-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  max-width: calc(100% + 25px);
+  margin-left: -11px;
+  color: var(--text);
+  font-size: 13px;
+}
+.page-orders .o-track-none {
+  padding-left: 11px;
+}
+.page-orders .o-track > .icon {
+  flex: none;
+  color: var(--success);
+}
+.page-orders .o-track .mono {
+  font-size: 12.5px;
+  letter-spacing: 0.01em;
+}
+.page-orders .o-track-input {
+  display: block;
+  width: 100%;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-2);
+  background: var(--panel-2);
+  color: var(--text);
+  font-size: 12.5px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.page-orders .o-track-input::placeholder {
+  color: var(--muted-2);
+  font-family: var(--font);
+}
+/* A number already in reads as plain, dim mono text (t280) until pointed at or focused;
+   an empty field keeps its box, so it is clear where to type. */
+.page-orders .o-track-input:not(:placeholder-shown) {
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted);
+}
+.page-orders .o-track-input:hover:not(:disabled) {
+  border-color: #3a3e4a;
+  background: var(--panel-2);
+  color: var(--text);
+}
+.page-orders .o-track-input:focus {
+  border-color: var(--accent);
+  background: var(--panel-2);
+  color: var(--text);
+  box-shadow: 0 0 0 3px rgba(124, 108, 246, 0.18);
+}
+.page-orders .o-track-input:disabled {
+  opacity: 0.65;
+}
+
+/* The pill never runs past its cell: at worst its words end in "…" (the column is
+   sized for the longest one, "Teslim edildi" / "Not sent"). */
+.page-orders .o-status {
+  display: inline-flex;
+  max-width: 100%;
+  vertical-align: middle;
+}
+.page-orders .o-status .badge {
+  height: 24px;
+  max-width: 100%;
+  padding: 0 9px;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.page-orders .o-status .badge .icon {
+  width: 12px;
+  height: 12px;
+  stroke-width: 2.8;
+}
+.page-orders .o-status .badge > span:not(.dot) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4; /* the clip box holds the tails of g and y ("Kargoda") */
+}
+
+/* t280's flip, once per row Etsy accepts: a short mint flash, the badge rises into
+   "Kargoda ✓", the ✓ scales in and the number brightens. A row re-rendered meanwhile
+   carries on through --flip-delay (negative: the time already gone). */
+.page-orders .o-table tbody tr.is-flipping {
+  animation: o-flash 450ms ease-out var(--flip-delay, 0ms);
+}
+@keyframes o-flash {
+  45% {
+    background-color: rgba(52, 211, 153, 0.1);
+  }
+}
+.page-orders tr.is-flipping .o-status .badge {
+  transform-origin: left center;
+  animation: o-badge-in 450ms var(--ease) var(--flip-delay, 0ms) backwards;
+}
+@keyframes o-badge-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.92);
+  }
+}
+.page-orders tr.is-flipping .o-track > .icon {
+  animation: o-check-in 450ms var(--ease) var(--flip-delay, 0ms) backwards;
+}
+@keyframes o-check-in {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+.page-orders tr.is-flipping .o-track .mono {
+  animation: o-track-in 450ms ease-out var(--flip-delay, 0ms) backwards;
+}
+@keyframes o-track-in {
+  from {
+    color: var(--muted);
+  }
+}
+
+/* ---- footer, empty and error states, the note under the card */
+
+.page-orders .o-foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 8px 16px 8px 18px;
+  border-top: 1px solid var(--border);
+}
+.page-orders .o-range {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.page-orders .o-range b {
+  color: var(--text-2);
+  font-weight: 600;
+}
+.page-orders .o-foot .o-more-btn {
+  flex: none;
+}
+/* The current page is a neutral dark square here (the İlanlar video keeps the violet). */
+.page-orders .page-btn.is-active {
+  background: var(--panel-3);
+  border-color: var(--border);
+  color: var(--text);
+}
+.page-orders .o-empty .empty {
+  padding: 40px 16px;
+}
+.page-orders .o-error {
+  padding: 20px;
+}
+.page-orders .o-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: -2px;
+  padding-left: 6px;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+.page-orders .o-note .icon {
+  flex: none;
+}
+.page-orders .o-setup .empty {
+  padding: 56px 16px;
+}
+
+/* ---- the success toast (rendered outside the page): the video's wider card, 470 px
+   at 1920 = 413 px, with a haloed mint check */
+
+.toast.o-toast-lg {
+  margin-right: max(0px, calc(var(--pad-x) - 24px));
+  width: 413px;
+  align-items: center;
+  gap: 13px;
+  padding: 14px 12px 14px 16px;
+}
+.toast.o-toast-lg .toast-icon {
+  width: 37px;
+  height: 37px;
+  box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.16);
+}
+.toast.o-toast-lg .toast-icon .icon {
+  width: 19px;
+  height: 19px;
+}
+.toast.o-toast-lg .toast-title {
+  font-size: 14.5px;
+  font-weight: 700;
+}
+
+/* ---- the confirm modal's list (rendered outside the page) */
+
+.o-confirm-list {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+  overflow: hidden;
+}
+.o-confirm-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12.5px;
+}
+.o-confirm-row:last-child {
+  border-bottom: 0;
+}
+.o-confirm-row .o-cell {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.o-confirm-row .o-no {
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+.o-confirm-row .o-sub {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+.o-confirm-row .o-carrier {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 7px;
+  border: 1px solid var(--border-2);
+  background: var(--panel-2);
+  color: var(--text-2);
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  max-width: 130px;
+}
+.o-confirm-row .o-carrier .icon {
+  flex: none;
+  color: var(--muted);
+}
+.o-confirm-row .o-carrier-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.o-confirm-track {
+  color: var(--text-2);
+  text-align: right;
+}
+.o-confirm-more {
+  padding: 8px 12px;
+  color: var(--muted);
+  font-size: 12px;
+  border-top: 1px solid var(--border);
+}
+
+/* ---- narrower windows */
+
+@media (max-width: 1360px) {
+  .page-orders .o-pill .progress {
+    width: 72px;
+  }
+  /* Narrower fixed columns so the product keeps some room (inline widths need !important). */
+  .page-orders .o-table .tbl colgroup col:nth-child(2) {
+    width: 136px !important; /* "Sep 28 · 09:23 PM" under the order number */
+  }
+  .page-orders .o-table .tbl colgroup col:nth-child(3) {
+    width: 126px !important; /* Inter: "Ava P." and its "Hediye" badge */
+  }
+  .page-orders .o-table .tbl colgroup col:nth-child(5) {
+    width: 84px !important;
+  }
+  .page-orders .o-table .tbl colgroup col:nth-child(6) {
+    width: 108px !important;
+  }
+  .page-orders .o-table .tbl colgroup col:nth-child(7) {
+    width: 158px !important;
+  }
+  .page-orders .o-table .tbl colgroup col:nth-child(8) {
+    width: 140px !important; /* the widest status pill is ~108 px */
+  }
+  /* An empty carrier select keeps its chevron; the truck icon goes so "Seçin" / "Choose" fit. */
+  .page-orders .o-carrier.is-empty > .icon {
+    display: none;
+  }
+  .page-orders .o-carrier.is-empty {
+    padding-left: 9px;
+  }
+  .page-orders .o-table .tbl td:last-child,
+  .page-orders .o-table .tbl th:last-child {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .page-orders .o-table .tbl {
+    min-width: 940px;
+  }
+}
+@media (max-width: 1180px) {
+  .page-orders .o-bar {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 860px) {
+  .page-orders .o-bar > .spacer {
+    display: none;
+  }
+  .page-orders .o-search {
+    width: 100%;
+  }
+}
+
+/* An order to make whose listing has no print file kept (drop/printfiles): a mark on
+   the product's picture. */
+.page-orders .o-thumb-wrap {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+}
+.page-orders .o-noprint {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  display: inline-grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  color: #1a1206;
+  background: var(--warning);
+  box-shadow: 0 0 0 2px var(--panel);
+  cursor: help;
+}
+
+.page-orders .o-printbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-size: 11.5px;
+  cursor: pointer;
+}
+.page-orders .o-printbtn:hover {
+  text-decoration: underline;
+}
+.o-print {
+  display: grid;
+  gap: 10px;
+}
+.o-print-dpi {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12.5px;
+}
+.o-print-item {
+  display: grid;
+  gap: 3px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--panel-3);
+  font-size: 13px;
+}
+.o-print-item.is-warn {
+  background: var(--warning-soft);
+}
+.o-print-warn,
+.o-print-done {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+}
+.o-print-warn {
+  color: var(--warning);
+}
+.o-print-done {
+  color: var(--success);
+}
+
+.page-orders .o-shipby {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+.page-orders .o-shipby.is-soon {
+  color: var(--warning);
+  font-weight: 600;
+}
+.page-orders .o-shipby.is-late {
+  color: var(--danger, #ef6a6a);
+  font-weight: 600;
+}
+
+.o-print-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+.o-pt-form {
+  display: grid;
+  gap: 10px;
+  font-size: 13px;
+}
+.o-pt-field {
+  display: grid;
+  gap: 4px;
+}
+.o-pt-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

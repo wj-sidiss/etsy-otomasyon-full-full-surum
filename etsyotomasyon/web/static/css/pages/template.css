@@ -1,0 +1,1314 @@
+/* Şablon İlan (/kurulum/sablon) - frame t200. */
+
+.page-template {
+  gap: 0;
+}
+
+/* Two cards side by side that fill the visible height; the listing column scrolls
+   inside its card, so the fields and the save button stay in view. */
+.tpl-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.11fr) minmax(0, 1fr);
+  gap: 20px;
+  /* --tpl-fill is measured by the page (it knows about the warning banner). */
+  min-height: var(--tpl-fill, calc(100vh - var(--topbar-h) - 2 * var(--pad-y)));
+}
+.tpl-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.tpl-card > .card-head {
+  align-items: flex-start;
+}
+.tpl-card > .card-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.page-template .tpl-card .card-title {
+  font-family: var(--font-display);
+  word-spacing: var(--display-word-spacing);
+  font-size: 17.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.page-template .tpl-card .card-sub {
+  font-size: 12.8px;
+}
+
+/* ------------------------------------------------------------------ listings */
+
+/* height 0 + min-height 100%: the row height comes from the fields card, and the list
+   scrolls instead of stretching the page. */
+.tpl-listings {
+  height: 0;
+  min-height: 100%;
+}
+.tpl-listings > .card-body {
+  gap: 14px;
+}
+.tpl-count {
+  display: flex;
+  align-items: center;
+  min-height: 26px;
+}
+.tpl-count .badge {
+  height: 24px;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.055);
+}
+.page-template .search {
+  display: flex;
+  width: 100%;
+  height: 42px;
+  padding: 0 14px;
+  background: var(--panel-2);
+  border-color: var(--border);
+}
+.page-template .search .kbd {
+  display: none;
+}
+.page-template .search-input {
+  font-size: 14px;
+}
+
+.tpl-list {
+  flex: 1 1 0;
+  min-height: 120px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 -6px;
+  padding: 2px 6px;
+  overscroll-behavior: contain;
+}
+.tpl-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: none;
+  min-height: 86px;
+  padding: 10px 18px 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.012);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.tpl-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: var(--border-2);
+}
+.tpl-row.is-selected {
+  background: rgba(124, 108, 246, 0.13);
+  border-color: rgba(124, 108, 246, 0.62);
+}
+.tpl-row:has(.tpl-radio-input:focus-visible) {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+.tpl-row.is-skeleton {
+  cursor: default;
+}
+.tpl-row.is-skeleton:hover {
+  background: rgba(255, 255, 255, 0.012);
+  border-color: var(--border);
+}
+.tpl-radio-input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  pointer-events: none;
+}
+.tpl-radio {
+  position: relative;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-right: 2px;
+  border-radius: 50%;
+  border: 1.5px solid #4a4e5b;
+  transition: border-color 0.15s;
+}
+.tpl-row:hover .tpl-radio {
+  border-color: #5e6271;
+}
+.tpl-row.is-selected .tpl-radio {
+  border: 2px solid var(--accent-2);
+}
+.tpl-row.is-selected .tpl-radio::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--accent-2);
+}
+.tpl-row .thumb {
+  background: #f1efea;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #9a9ca5;
+}
+.tpl-row .thumb:has(img) img {
+  object-fit: cover;
+}
+.tpl-skel-thumb {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 9px;
+}
+.tpl-row-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tpl-row-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.tpl-row-title {
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--text);
+}
+.tpl-row-sub {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px 7px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+/* A digital (or physical + digital) listing: its drafts get download files. */
+.tpl-row-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent-2);
+  font-weight: 500;
+}
+.tpl-row-type .icon {
+  flex: none;
+}
+.tpl-sep {
+  color: var(--muted-2);
+}
+.tpl-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--tone);
+  font-weight: 400;
+}
+.tpl-state .dot {
+  width: 6px;
+  height: 6px;
+}
+.tpl-row-price {
+  flex: none;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-2);
+  letter-spacing: 0.01em;
+}
+.tpl-row.is-selected .tpl-row-price {
+  color: var(--text);
+}
+
+.tpl-byid {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: none;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px dashed var(--accent-line);
+  background: var(--accent-soft);
+  color: var(--accent-2);
+  text-align: left;
+}
+.tpl-byid:hover {
+  background: rgba(124, 108, 246, 0.2);
+}
+.tpl-byid-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: rgba(124, 108, 246, 0.18);
+}
+.tpl-byid-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12.5px;
+  color: var(--text-2);
+}
+.tpl-byid-text b {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.tpl-empty,
+.tpl-setup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 1;
+  padding: 32px 16px;
+  text-align: center;
+}
+.tpl-setup .btn {
+  margin-top: 12px;
+}
+
+.tpl-more {
+  display: flex;
+  justify-content: center;
+  flex: none;
+}
+.tpl-more:empty {
+  display: none;
+}
+.tpl-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  color: var(--accent-2);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.tpl-more-btn:hover {
+  background: var(--accent-soft);
+}
+.tpl-more-note {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ------------------------------------------------------------------ fields */
+
+.tpl-fields {
+  container-type: inline-size;
+}
+.tpl-fields > .card-head {
+  margin-bottom: 6px;
+}
+.tpl-fields .card-sub {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tpl-source-label {
+  color: var(--muted);
+}
+/* The template's type, first on the source line: Fiziksel / Dijital / Fiziksel + dijital. */
+.tpl-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 8px;
+  padding-right: 8px;
+  border-right: 1px solid var(--border-2);
+  color: var(--text-2);
+  font-weight: 600;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+.tpl-type.is-download,
+.tpl-type.is-both {
+  color: var(--accent-2);
+}
+.tpl-type .icon,
+.tpl-type svg {
+  flex: none;
+}
+.tpl-source-title {
+  color: var(--text-2);
+}
+.tpl-source-none {
+  color: var(--muted);
+}
+.tpl-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tpl-badges .badge {
+  height: 24px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.tpl-fields-list {
+  display: flex;
+  flex-direction: column;
+}
+.tpl-field {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 61px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.tpl-field:last-child {
+  border-bottom: 0;
+}
+.tpl-field-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+}
+.tpl-field-text {
+  flex: 1 1 auto;
+  min-width: 92px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tpl-field-label {
+  font-size: 14px;
+  color: var(--text-2);
+}
+.tpl-field-why {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--warning);
+  opacity: 0.9;
+}
+.tpl-field-why.is-optional {
+  color: var(--muted);
+  opacity: 1;
+}
+.tpl-field-value {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+  flex: 0 1 auto;
+}
+.tpl-value {
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+.tpl-value.mono {
+  font-size: 14.5px;
+  font-weight: 600;
+}
+/* SablonEkrani.tsx: i_did / made_to_order on a faint white fill with a borderSoft hairline. */
+.tpl-code {
+  flex: none;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-soft);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.2;
+}
+.tpl-check {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(52, 211, 153, 0.16);
+  color: var(--success);
+}
+.tpl-check.is-idle {
+  background: rgba(47, 214, 163, 0.14);
+  opacity: 0.25;
+}
+/* Nothing picked yet: a grey bar where each value will come. */
+.tpl-bar {
+  display: block;
+  width: 132px;
+  max-width: 100%;
+  height: 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+}
+/* After a pick the values come in row by row, each check filling in; each row keeps its
+   grey bar until its value has replaced it (SablonEkrani.tsx FieldRow's cross-fade). */
+.tpl-fields-list.is-reveal .tpl-field-value {
+  position: relative;
+}
+.tpl-fields-list.is-reveal .tpl-field-value > :not(.tpl-bar-out) {
+  animation: tpl-in 0.35s var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+.tpl-bar-out {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  max-width: none;
+  margin-top: -6px;
+  pointer-events: none;
+  animation: tpl-bar-out 0.35s var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+.tpl-fields-list:not(.is-reveal) .tpl-bar-out {
+  display: none;
+}
+.tpl-fields-list.is-reveal .tpl-check {
+  animation: tpl-check-in 0.35s var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+@keyframes tpl-in {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+}
+@keyframes tpl-bar-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes tpl-check-in {
+  from {
+    opacity: 0.25;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tpl-fields-list.is-reveal .tpl-field-value > *,
+  .tpl-fields-list.is-reveal .tpl-check {
+    animation: none;
+  }
+  .tpl-bar-out {
+    display: none;
+  }
+}
+.tpl-field.is-idle .tpl-field-icon {
+  color: var(--muted);
+}
+.tpl-field.is-missing .tpl-field-icon {
+  color: var(--warning);
+  background: var(--warning-soft);
+  border-color: rgba(245, 181, 68, 0.22);
+}
+
+.tpl-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 18px;
+}
+.tpl-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.tpl-notes:empty {
+  display: none;
+}
+/* SablonEkrani.tsx: skySoft with a 0.28 sky hairline, the info icon in sky at 22px (19
+   here) on the first line, text 15.5px (13.5 here). */
+.tpl-bottom .note {
+  align-items: flex-start;
+  padding: 14px 16px;
+  font-size: 13.5px;
+}
+/* "Bunlar ticari kararlar." is semibold in the video, not bold. */
+.tpl-bottom .note-text b {
+  font-weight: 600;
+}
+.tpl-bottom .note.tone-info {
+  background: var(--info-soft);
+  border-color: rgba(90, 184, 255, 0.28);
+}
+.tpl-bottom .note.tone-info .note-icon {
+  width: 19px;
+  height: 19px;
+  margin-top: 1px;
+  color: var(--info);
+  background: transparent;
+}
+.tpl-bottom .note.tone-info .note-icon .icon {
+  width: 19px;
+  height: 19px;
+}
+.tpl-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 4px;
+}
+.tpl-hint {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.tpl-hint-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.tpl-footnote {
+  font-size: 13px;
+  color: var(--muted);
+}
+.tpl-hint-line.is-strong {
+  color: var(--text-2);
+}
+.tpl-hint-line .icon {
+  flex: none;
+  color: var(--accent-2);
+}
+.tpl-hint-line.is-warning {
+  align-items: flex-start;
+  color: var(--warning);
+  line-height: 1.4;
+}
+.tpl-hint-line.is-warning .icon {
+  margin-top: 2px;
+  color: var(--warning);
+}
+.tpl-actions .btn-lg {
+  padding: 0 22px;
+}
+
+/* The description template: a quiet line under the fields that opens its dialog, in the
+   warning colour while its text still holds sentences about the listing's own design. */
+.tpl-hint .tpl-desc-link {
+  display: inline-flex;
+  align-items: flex-start;
+  align-self: flex-start;
+  gap: 6px;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent-2);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+}
+.tpl-desc-link .icon {
+  flex: none;
+  margin-top: 2px;
+}
+.tpl-desc-link.is-warning {
+  color: var(--warning);
+}
+.tpl-desc-link-text {
+  min-width: 0;
+}
+.tpl-desc-link-action {
+  color: var(--accent-2);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.tpl-desc-link-action::before {
+  content: "·";
+  margin-right: 5px;
+  color: var(--muted-2);
+  font-weight: 400;
+}
+.tpl-desc-link:hover .tpl-desc-link-text,
+.tpl-desc-link:hover .tpl-desc-link-action {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.tpl-desc-link:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.tpl-desc-dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  margin: 6px 3px 0;
+  border-radius: 50%;
+  background: var(--warning);
+}
+
+@container (max-width: 430px) {
+  .tpl-code {
+    display: none;
+  }
+  /* A 1280 px window: a slimmer save button keeps "Varyasyonlar da kopyalanır" on one line. */
+  .tpl-actions {
+    gap: 12px;
+  }
+  .tpl-actions .btn-lg {
+    padding: 0 16px;
+  }
+}
+
+/* ------------------------------------------------------------------ info images */
+
+/* Under the two cards, so the screen the video shows stays as it is. */
+.tpl-info {
+  margin-top: 20px;
+  scroll-margin-top: 16px;
+}
+.tpl-info > .card-body {
+  gap: 18px;
+}
+.tpl-info .card-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.tpl-info-count .badge {
+  height: 24px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.tpl-info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.tpl-info-label {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+.tpl-info-sub {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+/* The pictures every draft ends with, in order; files may be dropped here too. */
+.tpl-info-order {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  min-height: 138px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px dashed var(--border-2);
+  background: rgba(255, 255, 255, 0.012);
+  transition: border-color 0.15s, background 0.15s;
+}
+.tpl-info-order.is-file-over {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+}
+.tpl-info-tile {
+  position: relative;
+  flex: none;
+  width: 112px;
+  height: 112px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #f1efea;
+  cursor: grab;
+}
+.tpl-info-tile.is-dragging {
+  opacity: 0.4;
+}
+/* Where a dragged picture lands: a bar just before (or after) a tile. */
+.tpl-info-tile.is-drop-before {
+  box-shadow: -8px 0 0 -5px var(--accent-2);
+}
+.tpl-info-tile.is-drop-after {
+  box-shadow: 8px 0 0 -5px var(--accent-2);
+}
+.tpl-info-img,
+.tpl-photo-img {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: #9a9ca5;
+}
+.tpl-info-img img,
+.tpl-photo-img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tpl-info-num {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 11px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+.tpl-info-kind {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background: rgba(10, 12, 17, 0.7);
+  color: var(--text-2);
+}
+.tpl-info-tools {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 14px 4px 5px;
+  background: linear-gradient(to top, rgba(10, 12, 17, 0.88), rgba(10, 12, 17, 0));
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.tpl-info-tile:hover .tpl-info-tools,
+.tpl-info-tile:focus-within .tpl-info-tools {
+  opacity: 1;
+}
+@media (hover: none) {
+  .tpl-info-tools {
+    opacity: 1;
+  }
+}
+.tpl-info-btn.btn {
+  width: 26px;
+  height: 26px;
+  min-height: 26px;
+  border-radius: 7px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+.tpl-info-btn.btn:hover:not(:disabled) {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+}
+.tpl-info-btn.is-remove:hover:not(:disabled):not([aria-disabled="true"]) {
+  color: #fff;
+  background: var(--danger);
+}
+.tpl-info-btn.btn:disabled,
+.tpl-info-btn.btn[aria-disabled="true"] {
+  opacity: 0.35;
+}
+.tpl-info-busy {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(10, 12, 17, 0.55);
+  color: #fff;
+}
+.tpl-info-tile.is-pending,
+.tpl-info-add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12.5px;
+  cursor: default;
+}
+.tpl-info-tile.is-pending {
+  background: var(--panel-2);
+  border-color: var(--border);
+  color: var(--muted);
+}
+.tpl-info-add {
+  background: transparent;
+  border: 1px dashed var(--border-2);
+  color: var(--accent-2);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.tpl-info-add:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+}
+.tpl-info-tile.is-skeleton,
+.tpl-photo.is-skeleton {
+  border: 0;
+  cursor: default;
+}
+.tpl-info-empty {
+  flex: 1 1 260px;
+  max-width: 560px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.tpl-info-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.tpl-info-notes:empty {
+  display: none;
+}
+.tpl-info-notes .note {
+  padding: 10px 14px;
+  font-size: 13px;
+}
+
+/* The template listing's photos: tick the ones every listing should end with. */
+.tpl-info-photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.tpl-photo {
+  position: relative;
+  flex: none;
+  width: 96px;
+  height: 96px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #f1efea;
+  transition: box-shadow 0.15s, opacity 0.15s;
+}
+.tpl-photo:hover:not(:disabled) {
+  box-shadow: 0 0 0 2px var(--border-2);
+}
+.tpl-photo.is-picked {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.tpl-photo.is-picked:hover:not(:disabled) {
+  box-shadow: 0 0 0 2px var(--accent-2);
+}
+.tpl-photo:disabled:not(.is-busy) {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.tpl-photo.is-busy {
+  cursor: progress;
+}
+.tpl-photo:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 3px;
+}
+.tpl-photo-check {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 6px;
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  background: rgba(10, 12, 17, 0.4);
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+.tpl-photo.is-picked .tpl-photo-check {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+/* In the fields card: how many there are, and the way down to them. */
+.tpl-info-link {
+  align-self: flex-start;
+  max-width: 100%;
+  color: var(--accent-2);
+  font-size: 12.5px;
+  font-weight: 500;
+  text-align: left;
+}
+.tpl-info-link > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tpl-info-link:hover > span {
+  text-decoration: underline;
+}
+
+/* ------------------------------------------------------------------ narrow / short */
+
+/* A short window (a 720 px laptop screen): tighter field rows keep the save button in view. */
+@media (max-height: 760px) {
+  .tpl-field {
+    min-height: 50px;
+    padding: 6px 0;
+  }
+  .tpl-fields > .card-head {
+    margin-bottom: 2px;
+  }
+  .tpl-bottom {
+    gap: 10px;
+    padding-top: 12px;
+  }
+  /* The note takes two lines here: a little less padding keeps the card on screen. */
+  .tpl-bottom .note {
+    padding: 10px 14px;
+  }
+  .tpl-row {
+    min-height: 78px;
+  }
+  .tpl-row .thumb {
+    width: 54px !important;
+    height: 54px !important;
+  }
+  /* The description template's line under the fields wraps in a narrow card: slightly
+     slimmer rows keep the save button in view. */
+  .tpl-fields:has(.tpl-desc-link) .tpl-field {
+    min-height: 47px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .tpl-row {
+    padding: 10px 14px 10px 12px;
+    gap: 12px;
+  }
+}
+
+/* ------------------------------------------------------------------ description dialog */
+
+/* The "Açıklama şablonu" dialog (in <body>, not under .page-template). */
+.tpl-desc-modal .modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tpl-desc-modal .modal-body > * + * {
+  margin-top: 0;
+}
+.tpl-desc-modal .modal-actions .tpl-desc-reset {
+  margin-right: auto;
+}
+.tpl-desc-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+}
+.tpl-desc-insert {
+  margin-right: 2px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.tpl-desc-ph {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 30px;
+  padding: 0 11px 0 6px;
+  border-radius: 8px;
+  border: 1px solid var(--border-2);
+  background: var(--panel-3);
+  color: var(--text-2);
+  font-size: 12.5px;
+  font-weight: 500;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.tpl-desc-ph:hover {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+  color: var(--text);
+}
+.tpl-desc-ph code,
+.tpl-desc-legend code {
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--accent-soft);
+  color: var(--accent-2);
+  font-family: var(--mono);
+  font-size: 11.5px;
+}
+.tpl-desc-state .badge {
+  white-space: nowrap;
+}
+
+/* A transparent textarea over a copy of its text laid out identically, where the flagged
+   sentences are marked: same box, font, padding, wrapping and scrollbar gutter. */
+.tpl-desc-editor {
+  position: relative;
+  height: clamp(170px, 34vh, 300px);
+  border: 1px solid var(--border-2);
+  border-radius: 10px;
+  background: var(--panel);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.tpl-desc-editor:hover {
+  border-color: #3a3e4a;
+}
+.tpl-desc-editor:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(123, 108, 255, 0.18);
+}
+.tpl-desc-backdrop,
+.tpl-desc-input {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 10px;
+  font-family: var(--font);
+  font-size: 13.5px;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: normal;
+  tab-size: 4;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: normal;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+.tpl-desc-backdrop {
+  overflow-y: hidden;
+  color: transparent;
+  pointer-events: none;
+}
+.tpl-desc-input {
+  background: transparent;
+  color: var(--text);
+  caret-color: var(--text);
+  resize: none;
+  outline: none;
+}
+.tpl-desc-mark {
+  color: transparent;
+  background: rgba(245, 181, 68, 0.16);
+  border-radius: 3px;
+  box-shadow: inset 0 -1.5px 0 rgba(245, 181, 68, 0.8);
+}
+.tpl-desc-mark.is-active {
+  background: rgba(245, 181, 68, 0.3);
+}
+.tpl-desc-legend {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: -4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.tpl-desc-legend-text {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.7;
+}
+.tpl-desc-count {
+  flex: none;
+  color: var(--muted-2);
+}
+.tpl-desc-problems {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tpl-desc-problems:empty {
+  display: none;
+}
+
+/* The flagged sentences, each with the page's words about it. */
+.tpl-desc-flags {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tpl-desc-flags-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+.tpl-desc-flags-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+.tpl-desc-flags-head.is-warning {
+  color: var(--warning);
+}
+.tpl-desc-flags-head.is-warning .tpl-desc-flags-icon {
+  background: var(--warning-soft);
+}
+.tpl-desc-flags-head.is-ok {
+  color: var(--success);
+  font-weight: 500;
+}
+.tpl-desc-flags-head.is-ok .tpl-desc-flags-icon {
+  background: var(--success-soft);
+}
+.tpl-desc-flags-head.is-muted {
+  color: var(--muted);
+  font-weight: 500;
+}
+.tpl-desc-checking {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.tpl-desc-flag-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 164px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+.tpl-desc-flag {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 8px 9px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(245, 181, 68, 0.22);
+  background: rgba(245, 181, 68, 0.06);
+  transition: background 0.15s, border-color 0.15s;
+}
+.tpl-desc-flag.is-active {
+  border-color: rgba(245, 181, 68, 0.55);
+  background: rgba(245, 181, 68, 0.11);
+}
+.tpl-desc-flag-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.tpl-desc-flag-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  color: var(--text);
+}
+.tpl-desc-flag-why {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.tpl-desc-flag-words {
+  color: var(--warning);
+}
+.tpl-desc-flag-actions {
+  display: flex;
+  flex: none;
+  gap: 2px;
+}
+@media (max-height: 760px) {
+  .tpl-desc-editor {
+    height: clamp(150px, 30vh, 230px);
+  }
+  .tpl-desc-flag-list {
+    max-height: 136px;
+  }
+}
+@media (max-width: 640px) {
+  .tpl-desc-flag {
+    flex-wrap: wrap;
+  }
+  .tpl-desc-legend {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+@media (max-width: 860px) {
+  .tpl-grid {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+  }
+  .tpl-listings {
+    height: auto;
+    min-height: 0;
+  }
+  .tpl-list {
+    flex: none;
+    max-height: 60vh;
+  }
+  .tpl-info .card-head {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 560px) {
+  .tpl-info-tile {
+    width: 96px;
+    height: 96px;
+  }
+  .tpl-photo {
+    width: 80px;
+    height: 80px;
+  }
+}

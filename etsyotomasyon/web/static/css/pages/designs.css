@@ -1,0 +1,2035 @@
+/* Tasarım Yükle (video frames t210, t220, t240; source YukleEkrani.tsx). Everything is
+   scoped to .page-designs, except the modals this page opens (they live in <body>).
+   Sizes are the video's at the 1545 px viewport (its px x 0.878). */
+
+.page-designs {
+  --dz-checker: repeating-conic-gradient(#eeedf2 0% 25%, #dfdee6 0% 50%) 0 0 / 10.5px 10.5px;
+  --dz-grad: linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 100%);
+  --dz-sky: #5ab8ff;
+  --dz-sky-soft: rgba(90, 184, 255, 0.14);
+}
+
+/* ------------------------------------------------------------------ idle: the drop zone */
+
+.page-designs.dz-page {
+  min-height: calc(100vh - var(--topbar-h) - 2 * var(--pad-y));
+}
+.page-designs .dz-upload-host:empty,
+.page-designs .dz-note-host:empty {
+  display: none;
+}
+.page-designs .dz-note-host {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.page-designs .dz-drop {
+  flex: 1 0 auto;
+  min-height: 340px;
+  overflow: hidden;
+  gap: 0;
+  padding: 32px 24px;
+  border: 2px dashed #363d50;
+  border-radius: 19px;
+  background:
+    radial-gradient(544px 316px at 50% 44%, rgba(124, 108, 246, 0.09), transparent 70%),
+    var(--panel);
+  transition: border-color 0.25s, box-shadow 0.3s, background 0.3s, transform 0.3s var(--ease);
+}
+.page-designs .dz-drop:hover {
+  border-color: #434b61;
+}
+/* Files over the zone (video t207): a purple tint and glow, the border in accent. */
+.page-designs .dz-drop.is-over {
+  border-color: var(--accent-2);
+  background:
+    radial-gradient(544px 316px at 50% 44%, rgba(124, 108, 246, 0.25), transparent 70%),
+    linear-gradient(rgba(124, 108, 246, 0.07), rgba(124, 108, 246, 0.07)),
+    var(--panel);
+  box-shadow: 0 0 0 5px rgba(124, 108, 246, 0.12), 0 21px 79px rgba(124, 108, 246, 0.3);
+  transform: scale(1.01);
+}
+/* Uploading: the zone keeps its look (setDisabled would dim it) and shows the pill. */
+.page-designs .dz-drop.is-disabled.is-uploading {
+  opacity: 1;
+  cursor: progress;
+}
+
+/* The faint 44 px grid in the middle and the floating sample designs (decoration). */
+.page-designs .dz-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 38.6px 38.6px;
+  background-position: center center;
+  -webkit-mask-image: radial-gradient(ellipse 60% 70% at 50% 50%, #000 20%, transparent 100%);
+  mask-image: radial-gradient(ellipse 60% 70% at 50% 50%, #000 20%, transparent 100%);
+}
+.page-designs .dz-decor {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.page-designs .dz-float {
+  position: absolute;
+  left: calc(var(--x) * 100%);
+  top: calc(var(--y) * 100%);
+  display: grid;
+  place-items: center;
+  width: var(--s);
+  height: var(--s);
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--dz-checker);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 16px 35px rgba(0, 0, 0, 0.5);
+  color: #8b91a3;
+  opacity: var(--o);
+  transform: translate(-50%, -50%) rotate(var(--r));
+  transition: transform 0.45s var(--ease), opacity 0.3s;
+}
+.page-designs .dz-float img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.page-designs .dz-drop.is-over .dz-float {
+  opacity: calc(var(--o) * 0.65);
+  transform: translate(-50%, -50%) translate(var(--ox), var(--oy)) rotate(calc(var(--r) * 0.6));
+}
+
+.page-designs .dz-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+/* The icon tile and its two rings: the rings overflow the tile and take no height. */
+.page-designs .dz-icon-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 102px;
+  height: 102px;
+  margin-bottom: 52px;
+  transition: transform 0.35s var(--ease);
+}
+.page-designs .dz-ring {
+  position: absolute;
+  border: 1px solid;
+  border-radius: 50%;
+  pointer-events: none;
+  transition: transform 0.35s var(--ease), border-color 0.3s;
+}
+.page-designs .dz-ring-a {
+  inset: -45.5px;
+  border-color: rgba(124, 108, 246, 0.1);
+}
+.page-designs .dz-ring-b {
+  inset: -23px;
+  border-color: rgba(124, 108, 246, 0.2);
+}
+.page-designs .dz-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 31.6px;
+  background: var(--panel-3);
+  border: 1px solid rgba(124, 108, 246, 0.35);
+  box-shadow: 0 16px 44px rgba(124, 108, 246, 0.25);
+  color: var(--accent-2);
+  transition: box-shadow 0.3s, color 0.2s;
+}
+.page-designs .dz-icon::before,
+.page-designs .dz-icon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.page-designs .dz-icon::before {
+  background: rgba(124, 108, 246, 0.16);
+}
+.page-designs .dz-icon::after {
+  background: var(--dz-grad);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.page-designs .dz-icon svg {
+  position: relative;
+  z-index: 1;
+  transition: transform 0.35s var(--ease);
+}
+.page-designs .dz-drop.is-over .dz-icon-wrap {
+  transform: translateY(-9px);
+}
+.page-designs .dz-drop.is-over .dz-ring-a {
+  border-color: rgba(124, 108, 246, 0.35);
+  transform: scale(1.06);
+}
+.page-designs .dz-drop.is-over .dz-ring-b {
+  border-color: rgba(124, 108, 246, 0.45);
+  transform: scale(1.12);
+}
+.page-designs .dz-drop.is-over .dz-icon {
+  color: #fff;
+  box-shadow: 0 16px 44px rgba(124, 108, 246, 0.6);
+}
+.page-designs .dz-drop.is-over .dz-icon::after {
+  opacity: 1;
+}
+.page-designs .dz-drop.is-over .dz-icon svg {
+  transform: translateY(-3.5px);
+}
+
+/* "Tasarımlarınızı buraya sürükleyin" gives way to "Bırakın!" (one after the other). */
+.page-designs .dz-titles {
+  display: grid;
+  justify-items: center;
+  width: 100%;
+}
+.page-designs .dz-title,
+.page-designs .dz-title-over {
+  grid-area: 1 / 1;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  text-align: center;
+}
+.page-designs .dz-title {
+  font-size: 33.4px;
+  font-weight: 700;
+  transition: opacity 0.16s, transform 0.25s var(--ease);
+}
+.page-designs .dz-title-over {
+  font-size: 36.9px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 3.5px 26px rgba(124, 108, 246, 0.6);
+  opacity: 0;
+  transform: translateY(10px) scale(0.94);
+  transition: opacity 0.16s, transform 0.3s var(--ease);
+}
+.page-designs .dz-drop.is-over .dz-title {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+.page-designs .dz-drop.is-over .dz-title-over {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.12s;
+}
+.page-designs .dz-sub {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 2px 10.5px;
+  margin-top: 10.5px;
+  font-size: 15.8px;
+  color: var(--text-2);
+}
+.page-designs .dz-dot {
+  color: #4a5163;
+}
+
+/* The row under the words: "Dosya seç", the dragged files' pill, or the upload's. */
+.page-designs .dz-slot {
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  min-height: 46px;
+  margin-top: 26px;
+}
+.page-designs .dz-slot > * {
+  grid-area: 1 / 1;
+}
+.page-designs .dz-pick-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: opacity 0.18s, visibility 0s;
+}
+.page-designs .dz-pick {
+  height: 45.6px;
+  padding: 0 19px;
+  gap: 7px;
+  border: 0;
+  border-radius: 10.5px;
+  background: var(--accent-soft);
+  color: var(--accent-2);
+  font-size: 15.8px;
+  font-weight: 600;
+}
+.page-designs .dz-pick:hover:not(:disabled) {
+  background: rgba(124, 108, 246, 0.22);
+  color: var(--accent-2);
+}
+.page-designs .dz-pick-or {
+  font-size: 14px;
+  color: var(--muted);
+}
+.page-designs .dz-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 45.6px;
+  padding: 0 19px 0 7px;
+  border-radius: 999px;
+  background: var(--dz-grad);
+  color: #fff;
+  font-size: 15.8px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 10.5px 30px rgba(124, 108, 246, 0.45);
+}
+.page-designs .dz-pill-drag {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px) scale(0.96);
+  transition: opacity 0.2s, transform 0.3s var(--ease), visibility 0s 0.3s;
+}
+.page-designs .dz-pill-drag:empty {
+  display: none;
+}
+.page-designs .dz-drop.is-over .dz-pill-drag {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 0.2s 0.1s, transform 0.3s var(--ease) 0.1s, visibility 0s;
+}
+.page-designs .dz-drop.is-over .dz-pick-row,
+.page-designs .dz-drop.is-uploading .dz-pick-row {
+  opacity: 0;
+  visibility: hidden;
+}
+.page-designs .dz-pill-stack {
+  display: inline-flex;
+  margin-right: 3px;
+}
+.page-designs .dz-pill-tile {
+  display: grid;
+  place-items: center;
+  width: 31.6px;
+  height: 31.6px;
+  overflow: hidden;
+  border-radius: 9px;
+  border: 2px solid #8c7fff;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+.page-designs .dz-pill-tile + .dz-pill-tile {
+  margin-left: -12px;
+}
+.page-designs .dz-pill-tile.is-image {
+  background: var(--dz-checker);
+}
+.page-designs .dz-pill-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.page-designs .dz-pill-tail {
+  font-weight: 500;
+  opacity: 0.8;
+}
+.page-designs .dz-up-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: default;
+}
+.page-designs .dz-up-host:empty {
+  display: none;
+}
+.page-designs .dz-pill-up {
+  position: relative;
+  overflow: hidden;
+}
+.page-designs .dz-pill-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.18);
+}
+.page-designs .dz-pill-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: #fff;
+  transition: width 0.2s var(--ease);
+}
+.page-designs .dz-pill-stop {
+  color: var(--text-2);
+}
+
+/* Designs already waiting in the folder: one pill, the list in a modal. */
+.page-designs .dz-wait-host {
+  margin-top: 18px;
+  transition: opacity 0.18s;
+}
+.page-designs .dz-wait-host:empty {
+  display: none;
+}
+.page-designs .dz-drop.is-over .dz-wait-host {
+  opacity: 0;
+  visibility: hidden;
+}
+.page-designs .dz-wait {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(24, 26, 33, 0.9);
+  border: 1px solid var(--border-2);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  cursor: default;
+}
+.page-designs .dz-wait-show {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  height: 32px;
+  padding: 0 10px 0 3px;
+  border-radius: 999px;
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 600;
+}
+.page-designs .dz-wait-show:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+.page-designs .dz-wait-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.page-designs .dz-wait-stack {
+  display: inline-flex;
+  flex: none;
+}
+.page-designs .dz-wait-stack .thumb {
+  background: var(--dz-checker);
+  border: 2px solid var(--panel-2);
+  box-sizing: content-box;
+}
+.page-designs .dz-wait-stack .thumb + .thumb {
+  margin-left: -10px;
+}
+.page-designs .dz-wait-bad {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  gap: 5px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--warning-soft);
+  color: var(--warning);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.page-designs .dz-wait-bad:hover {
+  background: color-mix(in srgb, var(--warning) 22%, transparent);
+}
+.page-designs .dz-wait-start {
+  flex: none;
+  border-radius: 999px;
+}
+
+/* Setup chips under the drop zone (InfoChip: a tinted icon, "Mockup: 6 hazır") */
+.page-designs .dz-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.page-designs .dz-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10.5px;
+  min-width: 0;
+}
+.page-designs .dz-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10.5px;
+  height: 47px;
+  max-width: 440px;
+  padding: 0 16px 0 9px;
+  border-radius: 12.3px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  white-space: nowrap;
+  transition: border-color 0.15s;
+}
+.page-designs button.dz-chip {
+  cursor: pointer;
+}
+.page-designs button.dz-chip:hover {
+  border-color: #3a3f4d;
+}
+.page-designs .dz-chip-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 8.8px;
+  background: var(--panel-3);
+  color: var(--muted);
+}
+.page-designs .dz-chip-mockup .dz-chip-icon,
+.page-designs .dz-chip-type .dz-chip-icon {
+  background: var(--accent-soft);
+  color: var(--accent-2);
+}
+.page-designs .dz-chip-template .dz-chip-icon {
+  background: var(--dz-sky-soft);
+  color: var(--dz-sky);
+}
+.page-designs .dz-chip-shop .dz-chip-icon {
+  background: var(--success-soft);
+  color: var(--success);
+}
+.page-designs .dz-chip.is-warn {
+  border-color: color-mix(in srgb, var(--warning) 35%, transparent);
+}
+.page-designs .dz-chip.is-warn .dz-chip-icon {
+  color: var(--warning);
+  background: var(--warning-soft);
+}
+.page-designs .dz-chip-label {
+  color: var(--muted);
+  white-space: nowrap;
+}
+.page-designs .dz-chip-value {
+  min-width: 0;
+  margin-left: -3.5px;
+  font-weight: 600;
+}
+.page-designs .dz-chip.is-warn .dz-chip-value {
+  color: var(--warning);
+}
+.page-designs .dz-chip-extra {
+  flex: none;
+  font-size: 12px;
+  color: var(--warning);
+  white-space: nowrap;
+}
+/* A digital template adds a fourth chip ("Ürün: Dijital"). Below 1400 px the row keeps
+   to one line: the type chip drops its label, the template's title ends in "…" sooner
+   (the whole title is on hover). */
+@media (max-width: 1400px) {
+  .page-designs .dz-chips.has-type .dz-chip-template {
+    max-width: 250px;
+  }
+  .page-designs .dz-chips.has-type .dz-chip-type .dz-chip-label {
+    display: none;
+  }
+}
+.page-designs .dz-chip-ok {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 17.5px;
+  height: 17.5px;
+  border-radius: 50%;
+  background: var(--success);
+  color: #062a1f;
+}
+.page-designs .dz-setup {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.3px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.page-designs .dz-setup.is-ok svg {
+  color: var(--success);
+}
+.page-designs .dz-setup.is-missing {
+  color: var(--warning);
+}
+.page-designs .dz-setup-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 4px;
+  color: var(--accent-2);
+  font-weight: 600;
+  text-decoration: none;
+}
+.page-designs .dz-setup-link:hover {
+  text-decoration: underline;
+}
+
+/* "Her tasarım için otomatik olarak" (PipelineStrip) */
+.page-designs .dz-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px 21px 17.5px;
+}
+.page-designs .dz-steps-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.page-designs .dz-steps-title {
+  font-size: 13.2px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+.page-designs .dz-steps-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.3px;
+  color: var(--muted);
+  text-align: right;
+}
+.page-designs .dz-steps-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.page-designs .dz-step {
+  display: flex;
+  align-items: center;
+  flex: 1 1 0;
+  gap: 10.5px;
+  min-width: 0;
+}
+.page-designs .dz-step-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 37px;
+  height: 37px;
+  border-radius: 10.5px;
+  background: var(--accent-soft);
+  border: 1px solid rgba(124, 108, 246, 0.28);
+  color: var(--accent-2);
+}
+.page-designs .dz-step-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.page-designs .dz-step-name {
+  font-size: 13.6px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.page-designs .dz-step-num {
+  margin-right: 5px;
+  font-family: var(--mono);
+  font-size: 11.4px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.page-designs .dz-step-sub {
+  font-size: 11.9px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.page-designs .dz-step-arrow {
+  flex: none;
+  color: #4a5163;
+}
+
+/* The waiting designs' modal (in <body>) */
+.dz-pending-modal .dz-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 10px;
+  max-height: min(52vh, 460px);
+  overflow: auto;
+  padding: 2px;
+}
+.dz-pending-modal .dz-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+  padding: 10px 8px 9px;
+  border-radius: 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+.dz-pending-modal .dz-tile .thumb {
+  margin-bottom: 5px;
+  background: repeating-conic-gradient(#eeedf2 0% 25%, #dfdee6 0% 50%) 0 0 / 10.5px 10.5px;
+}
+.dz-pending-modal .dz-tile.is-bad {
+  border-color: color-mix(in srgb, var(--danger) 35%, transparent);
+}
+.dz-pending-modal .dz-tile-name {
+  max-width: 100%;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+.dz-pending-modal .dz-tile-sub {
+  font-size: 11px;
+  color: var(--muted);
+}
+.dz-pending-modal .dz-tile-bad {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--danger);
+}
+/* A loose design of a digital template: the file itself is the download. */
+.dz-pending-modal .dz-tile-dl {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.dz-pending-modal .dz-tile-dl > svg {
+  color: var(--accent-2);
+}
+.dz-pending-modal .dz-tile-x {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.dz-pending-modal .dz-tile:hover .dz-tile-x,
+.dz-pending-modal .dz-tile-x:focus-visible {
+  opacity: 1;
+}
+.dz-pending-modal .dz-tile-more {
+  justify-content: center;
+  min-height: 118px;
+  color: var(--text-2);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.dz-pending-modal .dz-tile-more:hover {
+  border-color: var(--border-2);
+  color: var(--text);
+}
+.dz-pending-modal .modal-actions .dz-open-folder {
+  margin-right: auto;
+}
+
+/* After an upload: the files that did not go in, and why */
+.page-designs .dz-up {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 18px;
+}
+.page-designs .dz-up-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+.page-designs .dz-up-done {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--success-soft);
+  color: var(--success);
+}
+.page-designs .dz-up-done.has-errors {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+.page-designs .dz-up-done.is-none {
+  background: var(--panel-3);
+  color: var(--muted);
+}
+.page-designs .dz-up-failed {
+  color: var(--danger);
+  font-size: 13px;
+}
+.page-designs .dz-up-known {
+  color: var(--muted);
+  font-size: 13px;
+}
+.page-designs .dz-up-list {
+  max-height: 150px;
+  overflow: auto;
+  border-top: 1px solid var(--border);
+}
+.page-designs .dz-up-row {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) 70px minmax(140px, 320px);
+  align-items: center;
+  gap: 12px;
+  padding: 7px 2px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12.5px;
+  color: var(--text-2);
+}
+.page-designs .dz-up-row > svg {
+  color: var(--muted);
+}
+.page-designs .dz-up-size {
+  color: var(--muted);
+  text-align: right;
+}
+.page-designs .dz-up-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  color: var(--muted);
+}
+.page-designs .dz-up-row.is-error .dz-up-status {
+  color: var(--danger);
+}
+.page-designs .dz-up-row.is-skipped {
+  opacity: 0.65;
+}
+
+/* The start card (StepsScenes t210): title, one line, Başlat. The sidebar stays lit:
+   only the main area is dimmed, without blur. The backdrop still covers the whole
+   window (an aria-modal dialog), it is only transparent over the sidebar. */
+.modal.dz-ready {
+  border: 1px solid var(--accent);
+  border-radius: 17.5px;
+  background: var(--panel-2);
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.6);
+}
+.modal.dz-ready .modal-head {
+  padding: 23px 23px 0;
+}
+.modal.dz-ready .modal-x {
+  display: none;
+}
+.modal.dz-ready .modal-title {
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.modal.dz-ready .modal-sub {
+  margin-top: 12px;
+  font-size: 15px;
+  color: var(--muted);
+}
+.modal.dz-ready .modal-body {
+  padding: 14px 23px 0;
+}
+.modal.dz-ready .modal-actions {
+  padding: 14px 23px 23px;
+}
+.modal.dz-ready .dz-ready-start {
+  height: 45px;
+  padding: 0 23px;
+  gap: 9px;
+  border-radius: 10.5px;
+  font-size: 17.5px;
+  font-weight: 700;
+}
+@media (min-width: 641px) {
+  .modal-backdrop:has(> .modal.dz-ready) {
+    padding-left: calc(var(--sidebar-w) + 16px);
+    background: linear-gradient(90deg, transparent var(--sidebar-w), rgba(5, 6, 9, 0.55) var(--sidebar-w));
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+.dz-modal-hint {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+/* A digital template: "Dijital ürün · tasarım dosyası indirilebilir dosya olarak eklenir". */
+.dz-modal-type {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--accent-soft);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+.dz-modal-type-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--accent-2);
+}
+.dz-modal-type-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.dz-modal-type-main strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.dz-modal-type-more {
+  color: var(--muted);
+  font-size: 12px;
+}
+/* "Filigran: açık · dijital ürünlerde" (not in the video: the watermark of the Mockuplar
+   page): one quiet line, the drop in accent2 while the run stamps. */
+.dz-modal-wm {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.dz-modal-wm-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: var(--panel-3);
+  color: var(--muted);
+}
+.dz-modal-wm.is-on .dz-modal-wm-icon {
+  background: var(--accent-soft);
+  color: var(--accent-2);
+}
+.dz-modal-wm-text {
+  flex: 1;
+  min-width: 0;
+}
+.dz-modal-wm-text strong {
+  color: var(--text-2);
+  font-weight: 600;
+}
+.dz-modal-wm.is-on .dz-modal-wm-text {
+  color: var(--text-2);
+}
+.dz-modal-wm-skip {
+  color: var(--muted);
+}
+.dz-modal-wm-edit {
+  flex: none;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--accent-2);
+}
+.dz-modal-wm-edit:hover {
+  text-decoration: underline;
+}
+.dz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dz-option {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 13px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border-2);
+  background: var(--panel-2);
+  cursor: pointer;
+}
+.dz-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.dz-option:focus-within {
+  outline: 2px solid var(--accent-line);
+  outline-offset: 2px;
+}
+.dz-option.is-selected {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+}
+.dz-option-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--panel-3);
+  color: var(--muted);
+}
+.dz-option.is-selected .dz-option-icon {
+  color: var(--accent-2);
+}
+.dz-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.dz-option-text strong {
+  font-size: 14px;
+  color: var(--text);
+}
+/* The start card's "Mağaza bölümü": the label above the select, so a long choice such
+   as "Şablondaki gibi (silinmiş bölüm)" keeps the card's width; notes below. */
+.dz-ready-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+}
+.dz-section-label {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+.dz-section-label svg {
+  flex: none;
+  color: var(--accent-2);
+}
+.dz-ready-section .dz-section-select {
+  width: 100%;
+  height: 38px;
+}
+.dz-section-select.is-loading .select-native {
+  color: var(--muted);
+}
+.dz-section-note {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 2px;
+}
+.dz-section-note[hidden] {
+  display: none;
+}
+.dz-section-note .dz-modal-hint {
+  margin: 0;
+  line-height: 1.45;
+}
+.dz-review {
+  display: flex;
+  flex-direction: column;
+  max-height: 360px;
+  overflow: auto;
+}
+.dz-review-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.dz-review-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+.dz-review-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.dz-review-meta a {
+  color: var(--accent-2);
+}
+.dz-review-id {
+  color: var(--muted);
+}
+.dz-review-why {
+  font-size: 12.5px;
+  color: var(--text-2);
+}
+/* The library's own words (English): a muted detail, the whole text on hover. */
+.dz-review-msg {
+  font-size: 11.5px;
+  color: var(--muted);
+  opacity: 0.85;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dz-review-row > .btn {
+  flex: none;
+}
+
+/* ------------------------------------------------------------------ run: the header card */
+
+.page-designs .dr-head {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 88px;
+  padding: 14px 22px;
+}
+.page-designs .dr-tile {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  color: #fff;
+  background: var(--dz-grad);
+  box-shadow: 0 9px 25px rgba(124, 108, 246, 0.4);
+}
+.page-designs .dr-head-text {
+  min-width: 0;
+  flex: 0 1 auto;
+}
+.page-designs .dr-head.is-running .dr-head-text {
+  flex: 0 1 316px;
+}
+.page-designs .dr-head.is-final .dr-head-text {
+  flex: 0 1 auto;
+  min-width: 220px;
+}
+.page-designs .dr-head-title {
+  font-size: 18.4px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+}
+.page-designs .dr-head-sub {
+  margin-top: 3px;
+  font-size: 12.7px;
+  color: var(--muted);
+}
+.page-designs .dr-progress {
+  flex: 1 1 260px;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.page-designs .dr-progress-top {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+.page-designs .dr-big {
+  font-size: 22.8px;
+  font-weight: 800;
+  line-height: 1;
+}
+.page-designs .dr-total {
+  font-size: 15.8px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.page-designs .dr-count-label {
+  margin-left: 4px;
+  font-size: 13.2px;
+  color: var(--text-2);
+}
+.page-designs .dr-pct {
+  font-family: var(--mono);
+  font-size: 13.2px;
+  font-weight: 600;
+  color: var(--accent-2);
+}
+.page-designs .dr-progress .progress {
+  height: 8.8px;
+}
+.page-designs .dr-divider {
+  flex: none;
+  width: 1px;
+  height: 45px;
+  background: var(--border-2);
+}
+/* "~2 dk kaldı" / "Tahmini süre" (video t213) */
+.page-designs .dr-eta {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  gap: 3px;
+  min-width: 128px;
+}
+.page-designs .dr-eta-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--accent-2);
+}
+.page-designs .dr-eta-value {
+  font-size: 15.8px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.page-designs .dr-eta-label {
+  font-size: 11.9px;
+  color: var(--muted);
+}
+
+/* Finished: the banner (t240) */
+.page-designs .dr-head.is-final {
+  --tone: var(--success);
+  --tone-soft: var(--success-soft);
+  border-color: color-mix(in srgb, var(--tone) 34%, transparent);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--tone) 11%, var(--panel)), color-mix(in srgb, var(--tone) 4%, var(--panel)) 55%, var(--panel));
+  box-shadow: 0 0 40px -18px color-mix(in srgb, var(--tone) 60%, transparent);
+}
+.page-designs .dr-head.is-final.tone-warning {
+  --tone: var(--warning);
+  --tone-soft: var(--warning-soft);
+}
+.page-designs .dr-head.is-final.tone-danger {
+  --tone: var(--danger);
+  --tone-soft: var(--danger-soft);
+}
+.page-designs .dr-head.is-final.tone-info {
+  --tone: var(--accent-2);
+  --tone-soft: var(--accent-soft);
+}
+.page-designs .dr-head.is-final .dr-tile {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  color: #06251b;
+  background: var(--tone);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--tone) 18%, transparent), 0 10px 30px -8px color-mix(in srgb, var(--tone) 70%, transparent);
+}
+.page-designs .dr-head.is-final.tone-danger .dr-tile,
+.page-designs .dr-head.is-final.tone-info .dr-tile {
+  color: #fff;
+}
+.page-designs .dr-head.is-final.tone-warning .dr-tile {
+  color: #2d1f05;
+}
+.page-designs .dr-chips {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: 8px;
+  margin-left: 18px;
+}
+.page-designs .dr-head.is-final > .spacer {
+  display: none;
+}
+.page-designs .dr-chips .badge {
+  height: 28px;
+}
+.page-designs .dr-duration {
+  color: var(--text-2);
+  background: rgba(255, 255, 255, 0.05);
+  font-weight: 600;
+}
+.page-designs .dr-actions {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: 10px;
+  margin-left: auto;
+}
+
+/* ------------------------------------------------------------------ run: pipeline + side card */
+
+.page-designs .dr-grid {
+  --dr-step: 70px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.46fr) minmax(360px, 1fr);
+  gap: 16px;
+  /* Both cards end on one line, as in the video (t220, t240): each fills its cell, and
+     the pipeline's footer and the side card's "Şablondan" footer sit at the bottom. */
+  align-items: stretch;
+}
+.page-designs .dr-grid[hidden] {
+  display: none;
+}
+.page-designs .dr-grid.is-expanded {
+  align-items: start;
+}
+.page-designs .dr-pipe-host,
+.page-designs .dr-side-host {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.page-designs .dr-pipe-host > .card,
+.page-designs .dr-side-host > .card {
+  flex: 1 1 auto;
+}
+.page-designs .dr-pipe {
+  display: flex;
+  flex-direction: column;
+}
+.page-designs .dr-pipe > .dr-tfoot {
+  margin-top: auto;
+}
+.page-designs .dr-side > .dr-side-foot {
+  margin-top: auto;
+}
+.page-designs .dr-pipe-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 20px 16px;
+}
+.page-designs .dr-pipe-title {
+  font-size: 16.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.page-designs .dr-pipe-count {
+  font-size: 14px;
+  color: var(--muted);
+}
+.page-designs .dr-legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.page-designs .dr-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.page-designs .dr-legend-item i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #3a3d49;
+}
+.page-designs .dr-legend-item.is-done i {
+  background: var(--success);
+}
+.page-designs .dr-legend-item.is-running i {
+  width: 9px;
+  height: 9px;
+  background: transparent;
+  border: 2px solid var(--accent-2);
+}
+.page-designs .dr-thead,
+.page-designs .dr-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) repeat(6, var(--dr-step));
+  align-items: center;
+  column-gap: 0;
+  padding: 0 20px;
+}
+/* The column names on their own lighter band (video: panel2, 42 px). */
+.page-designs .dr-thead {
+  height: 37px;
+  background: var(--panel-2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.page-designs .dr-th-step {
+  text-align: center;
+  white-space: nowrap;
+}
+.page-designs .dr-row {
+  position: relative;
+  min-height: 58px;
+  padding-top: 9px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.page-designs .dr-row:hover {
+  background: var(--hover);
+}
+.page-designs .dr-row:focus-visible {
+  outline: 2px solid var(--accent-line);
+  outline-offset: -2px;
+}
+.page-designs .dr-row.is-current {
+  background: rgba(124, 108, 246, 0.075);
+}
+.page-designs .dr-row.is-current::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 2.5px;
+  border-radius: 0 2px 2px 0;
+  background: var(--accent);
+}
+.page-designs .dr-row.is-skeleton {
+  display: block;
+  cursor: default;
+  padding: 14px 20px;
+}
+.page-designs .dr-file {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+/* A transparent design reads as one on a checkerboard (video DesignTile). */
+.page-designs .dr-file .thumb,
+.page-designs .dr-stack .thumb,
+.page-designs .dr-side-head .thumb {
+  background: var(--dz-checker);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 3.5px 9px rgba(0, 0, 0, 0.35);
+}
+.page-designs .dr-file-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.page-designs .dr-name {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.page-designs .dr-state {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.page-designs .dr-state.is-success {
+  color: var(--success);
+}
+.page-designs .dr-state.is-warning {
+  color: var(--warning);
+}
+.page-designs .dr-state.is-danger {
+  color: var(--danger);
+}
+.page-designs .dr-state.is-accent {
+  color: var(--accent-2);
+}
+.page-designs .dr-dots {
+  grid-column: 2 / -1;
+  min-width: 0;
+}
+.page-designs .dr-row.is-current .sd-dot {
+  box-shadow: 0 0 0 4px #17172a;
+}
+.page-designs .dr-row.is-current .sd.is-done .sd-dot,
+.page-designs .dr-row.is-current .sd.is-warn .sd-dot,
+.page-designs .dr-row.is-current .sd.is-error .sd-dot,
+.page-designs .dr-row.is-current .sd.is-running .sd-dot {
+  box-shadow: 0 0 0 3px #17172a;
+}
+.page-designs .dr-row.is-cancelled .dr-dots {
+  opacity: 0.55;
+}
+.page-designs .dr-tfoot {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 13px 20px 14px;
+}
+.page-designs .dr-tfoot[hidden] {
+  display: none;
+}
+.page-designs .dr-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-2);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.page-designs .dr-more:hover {
+  color: var(--text);
+}
+.page-designs .dr-stack {
+  display: inline-flex;
+}
+.page-designs .dr-stack .thumb {
+  box-shadow: 0 0 0 2px var(--panel), 0 3.5px 9px rgba(0, 0, 0, 0.4);
+}
+.page-designs .dr-stack .thumb + .thumb {
+  margin-left: -10.5px;
+}
+.page-designs .dr-foot-line {
+  flex: 1 1 auto;
+  max-width: 280px;
+  height: 5px;
+  margin-left: auto;
+  border-radius: 999px;
+  background: var(--panel-3);
+  overflow: hidden;
+}
+.page-designs .dr-foot-line > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transition: width 0.4s var(--ease);
+}
+.page-designs .dr-foot-line.is-done > span {
+  background: var(--success);
+}
+.page-designs .dr-foot-line.is-stopped > span {
+  background: var(--muted-2);
+}
+.page-designs .dr-foot-note {
+  font-size: 12.5px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.page-designs .dr-foot-note.is-done {
+  color: var(--success);
+}
+
+/* The "being prepared" / "sample draft" card */
+.page-designs .dr-side {
+  padding: 16px 19px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+.page-designs .dr-side-empty {
+  padding: 40px 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+.page-designs .dr-side-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+/* Once there is a draft the card's head opens it. */
+.page-designs .dr-side-link {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  gap: 12px;
+  min-width: 0;
+  border-radius: 10px;
+  color: inherit;
+  text-decoration: none;
+}
+.page-designs .dr-side-link:hover {
+  text-decoration: none;
+}
+.page-designs .dr-side-link:hover .dr-side-sub {
+  color: var(--accent-2);
+}
+.page-designs .dr-side-link:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 4px;
+}
+.page-designs .dr-side-titles {
+  flex: 1;
+  min-width: 0;
+}
+.page-designs .dr-side-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+.page-designs .dr-side-title.is-sample svg {
+  color: var(--success);
+}
+.page-designs .dr-live-dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent-2);
+  box-shadow: 0 0 0 3.5px rgba(124, 108, 246, 0.3);
+  animation: dr-pulse 1.6s ease-in-out infinite;
+}
+@keyframes dr-pulse {
+  50% {
+    box-shadow: 0 0 0 5px rgba(124, 108, 246, 0.12), 0 0 12px rgba(155, 140, 255, 0.8);
+  }
+}
+.page-designs .dr-side-sub {
+  margin-top: 2px;
+  font-size: 12.3px;
+  color: var(--muted);
+}
+/* The step the product is in ("Başlık yazılıyor"): never wider than half the card. */
+.page-designs .dr-stage {
+  flex: none;
+  max-width: 48%;
+  overflow: hidden;
+}
+.page-designs .dr-stage > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.page-designs .dr-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.page-designs .dr-section-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+.page-designs .dr-section-head > svg {
+  color: var(--muted);
+}
+/* n/6, n/140, n/13 (video Count): mono, muted at 0, accent while the step runs. */
+.page-designs .dr-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 12.3px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+.page-designs .dr-count.is-active {
+  color: var(--accent-2);
+}
+.page-designs .dr-count.is-ok {
+  color: var(--success);
+}
+.page-designs .dr-count.is-warn {
+  color: var(--warning);
+}
+.page-designs .dr-mockups {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.page-designs .dr-mockup {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #efece6;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #3a4152;
+}
+.page-designs .dr-mockup img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.page-designs .dr-mockup.is-empty,
+.page-designs .dr-mockup.is-pending {
+  background: var(--panel-2);
+  border: 1.5px dashed var(--border-2);
+}
+/* A tile waiting for its picture is still the empty slot (video MockCell): its icon
+   shows, the picture and "+2" come with the tile. */
+.page-designs .dr-mockup.is-pending > img,
+.page-designs .dr-mockup.is-pending > .dr-mockup-more {
+  opacity: 0;
+}
+.page-designs .dr-mockup-slot {
+  display: none;
+}
+.page-designs .dr-mockup.is-pending > .dr-mockup-slot {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.page-designs .dr-mockup.is-in,
+.page-designs .dr-tag.is-in {
+  animation: dr-pop 0.32s var(--ease) both;
+}
+@keyframes dr-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+.page-designs .dr-mockup-more {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  padding: 3px 7px;
+  border-radius: 7px;
+  background: rgba(10, 12, 17, 0.78);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+/* The title keeps three lines' room (it never pushes the tags down while it types, and
+   a fourth line still shows: it is never cut). */
+.page-designs .dr-titlebox {
+  min-height: 82px;
+  padding: 10px 12px;
+  border-radius: 10.5px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+}
+.page-designs .dr-titlebox.is-final {
+  color: var(--text-2);
+}
+.page-designs .dr-titlebox .skeleton-group {
+  padding-top: 4px;
+}
+.page-designs .dr-titlebox.is-live,
+.page-designs .dr-side.is-live .dr-titlebox:has(.dr-caret) {
+  border-color: rgba(124, 108, 246, 0.6);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.page-designs .dr-caret {
+  display: inline-block;
+  width: 2px;
+  height: 16.7px;
+  margin-left: 2px;
+  vertical-align: -3.5px;
+  border-radius: 1px;
+  background: var(--accent-2);
+  box-shadow: 0 0 8px rgba(168, 156, 255, 0.8);
+  animation: dr-blink 0.9s steps(1) infinite;
+}
+@keyframes dr-blink {
+  50% {
+    opacity: 0;
+  }
+}
+.page-designs .dr-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.page-designs .dr-tags .tagchip {
+  height: 29px;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: var(--panel-3);
+  border-color: var(--border);
+  color: var(--text-2);
+  font-size: 12.3px;
+  font-weight: 500;
+}
+/* Before the tags are known: dashed slots whose widths (set by the page) are fractions
+   of the row, four to a row at any card width (video t219). */
+.page-designs .dr-tags .tagchip.is-slot {
+  flex: none;
+  min-width: 0;
+  padding: 0;
+  background: transparent;
+  border: 1px dashed #30374a;
+}
+/* A tag about to pop in holds its own width as a dashed slot; the newest one is lit. */
+.page-designs .dr-tags .dr-tag.is-pending {
+  background: transparent;
+  border: 1px dashed #30374a;
+  color: transparent;
+}
+.page-designs .dr-tags .dr-tag.is-hot {
+  background: rgba(124, 108, 246, 0.24);
+  border-color: rgba(168, 156, 255, 0.7);
+  box-shadow: 0 5px 16px rgba(124, 108, 246, 0.35);
+  color: #fff;
+}
+.page-designs .dr-tags .dr-tag {
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s, color 0.3s;
+}
+.page-designs .dr-notes {
+  gap: 8px;
+}
+/* A digital draft's download files, ticked off as they go up in the Taslak step: on the
+   heading's line, wrapping below it only when there are several. */
+.page-designs .dr-files-section .dr-section-head {
+  flex-wrap: wrap;
+  row-gap: 6px;
+}
+.page-designs .dr-files-label {
+  white-space: nowrap;
+}
+.page-designs .dr-files {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 0 1 auto;
+  min-width: 0;
+  gap: 6px;
+  margin: 0 0 0 4px;
+  padding: 0;
+  list-style: none;
+  font-weight: 500;
+}
+.page-designs .dr-files-section .dr-none {
+  margin: 0 0 0 4px;
+  font-weight: 400;
+  font-size: 12.5px;
+}
+.page-designs .dr-file-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+  height: 27px;
+  padding: 0 9px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  font-size: 12.5px;
+  color: var(--text-2);
+}
+.page-designs .dr-file-item > svg {
+  flex: none;
+  color: var(--muted);
+}
+.page-designs .dr-file-item.is-sent > svg {
+  color: var(--success);
+}
+.page-designs .dr-detail {
+  color: var(--muted);
+  font-size: 12px;
+}
+.page-designs .dr-warns {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12.5px;
+  color: var(--warning);
+}
+.page-designs .dr-warns li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.page-designs .dr-side-foot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.page-designs .dr-tpl-label {
+  margin-right: 2px;
+}
+.page-designs .dr-tpl-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 7px;
+  background: var(--panel-2);
+  border: 1px solid var(--border-2);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+}
+.page-designs .dr-tpl-chip.is-warn {
+  color: var(--warning);
+  border-color: color-mix(in srgb, var(--warning) 35%, transparent);
+}
+
+/* ------------------------------------------------------------------ narrower / shorter windows */
+
+@media (max-width: 1400px) {
+  .page-designs .dr-grid {
+    --dr-step: 56px;
+    grid-template-columns: minmax(0, 1.4fr) minmax(330px, 1fr);
+  }
+  .page-designs .dr-th-step {
+    font-size: 11.5px;
+  }
+  .page-designs .dz-step-sub {
+    display: none;
+  }
+  .page-designs .dr-head {
+    gap: 12px;
+  }
+  .page-designs .dr-head-sub {
+    font-size: 12.5px;
+  }
+  .page-designs .dr-head.is-final .dr-chips {
+    margin-left: 6px;
+    gap: 6px;
+  }
+  /* Inter is a little wider than the system face: "10 taslak Etsy'ye gönderildi" stays
+     on one line next to the chips and the buttons of a 1280 px window. */
+  .page-designs .dr-head.is-final .dr-head-title {
+    font-size: 17px;
+  }
+  .page-designs .dr-side-title {
+    font-size: 15.5px;
+  }
+}
+@media (max-width: 1180px) {
+  .page-designs .dr-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .page-designs .dr-head {
+    flex-wrap: wrap;
+  }
+  .page-designs .dr-head.is-final .dr-chips {
+    margin-left: 72px;
+  }
+  .page-designs .dz-steps-row {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    row-gap: 12px;
+  }
+  .page-designs .dz-step-arrow {
+    display: none;
+  }
+  .page-designs .dz-step {
+    flex: 0 0 calc(33.3% - 8px);
+  }
+}
+/* A short window (1280x720): a smaller tile, rings and title, so the idle page with its
+   three blocks still fits without scrolling. */
+@media (max-height: 760px) {
+  .page-designs .dz-drop {
+    min-height: 300px;
+    padding: 24px;
+  }
+  .page-designs .dz-icon-wrap {
+    width: 84px;
+    height: 84px;
+    margin-bottom: 42px;
+  }
+  .page-designs .dz-icon {
+    border-radius: 26px;
+  }
+  .page-designs .dz-icon svg {
+    width: 38px;
+    height: 38px;
+  }
+  .page-designs .dz-ring-a {
+    inset: -33px;
+  }
+  .page-designs .dz-ring-b {
+    inset: -15.5px;
+  }
+  .page-designs .dz-title {
+    font-size: 28px;
+  }
+  .page-designs .dz-title-over {
+    font-size: 31px;
+  }
+  .page-designs .dz-slot {
+    margin-top: 18px;
+  }
+  .page-designs .dz-wait-host {
+    margin-top: 14px;
+  }
+}
+@media (max-width: 760px) {
+  .page-designs .dz-float {
+    display: none;
+  }
+  .page-designs .dz-title {
+    font-size: 22px;
+  }
+  .page-designs .dz-title-over {
+    font-size: 26px;
+  }
+  .page-designs .dz-pick-or {
+    display: none;
+  }
+  .page-designs .dr-thead,
+  .page-designs .dr-row {
+    --dr-step: 34px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .page-designs .dr-th-step {
+    font-size: 0;
+  }
+  .page-designs .dz-up-row {
+    grid-template-columns: 16px minmax(0, 1fr) 60px;
+  }
+  .page-designs .dz-up-status {
+    display: none;
+  }
+  .page-designs .dr-divider,
+  .page-designs .dr-eta {
+    display: none;
+  }
+}
+/* Less motion: the same states, without growing, sliding or popping. */
+@media (prefers-reduced-motion: reduce) {
+  .page-designs .dz-drop.is-over,
+  .page-designs .dz-drop.is-over .dz-icon-wrap,
+  .page-designs .dz-drop.is-over .dz-icon svg,
+  .page-designs .dz-drop.is-over .dz-ring-a,
+  .page-designs .dz-drop.is-over .dz-ring-b,
+  .page-designs .dz-title,
+  .page-designs .dz-title-over,
+  .page-designs .dz-drop.is-over .dz-title,
+  .page-designs .dz-pill-drag {
+    transform: none;
+  }
+  .page-designs .dz-drop.is-over .dz-float {
+    transform: translate(-50%, -50%) rotate(var(--r));
+  }
+  .page-designs .dr-live-dot,
+  .page-designs .dr-caret,
+  .page-designs .dr-mockup.is-in,
+  .page-designs .dr-tag.is-in {
+    animation: none;
+  }
+}

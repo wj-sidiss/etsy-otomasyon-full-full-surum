@@ -1,0 +1,68 @@
+name: Bug report
+description: Something did not work the way it should
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Before you paste anything:** redact your keystring, shared secret and any
+        token. If you have already pasted one somewhere, rotate it at
+        <https://www.etsy.com/developers/your-apps>.
+
+  - type: textarea
+    id: command
+    attributes:
+      label: What you ran
+      description: The exact command, with credentials removed.
+      render: shell
+      placeholder: etsyotomasyon listings push products.csv --dry-run
+    validations:
+      required: true
+
+  - type: textarea
+    id: happened
+    attributes:
+      label: What happened
+      description: The output or error, with credentials removed.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: etsyotomasyon version
+      description: Output of `etsyotomasyon --version`
+      placeholder: etsyotomasyon 0.1.0
+    validations:
+      required: true
+
+  - type: input
+    id: python
+    attributes:
+      label: Python version and OS
+      placeholder: Python 3.12.10 on Windows 11
+    validations:
+      required: true
+
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Output of `etsyotomasyon doctor`
+      description: Optional, but it usually identifies the problem immediately. It prints no secrets.
+      render: shell
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I removed every credential from the text above
+          required: true

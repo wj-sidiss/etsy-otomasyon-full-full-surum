@@ -1,0 +1,651 @@
+/* Taslak İlan (frames t015, t230). Scoped under .page-listing-detail. */
+
+.page-listing-detail .ld-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
+  gap: 24px;
+  align-items: start;
+}
+
+/* ---------------------------------------------------------------- header pager */
+.ld-pager {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ld-pager-pos {
+  min-width: 52px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+.ld-pager-pos b {
+  color: var(--text);
+  font-weight: 700;
+}
+
+/* ---------------------------------------------------------------- left: images */
+.page-listing-detail .ld-left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.page-listing-detail .ld-hero {
+  position: relative;
+  aspect-ratio: 1.1 / 1;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: #eeeae4;
+  border: 1px solid var(--border);
+}
+.page-listing-detail .ld-grid.is-loading .ld-hero {
+  background: var(--panel-2);
+}
+.page-listing-detail .ld-hero-skel {
+  position: absolute;
+  inset: 0;
+  border-radius: 0;
+}
+.page-listing-detail .ld-hero-blur {
+  position: absolute;
+  inset: -24px;
+  background-position: center;
+  background-size: cover;
+  filter: blur(28px) saturate(0.9);
+  opacity: 0.85;
+}
+.page-listing-detail .ld-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.page-listing-detail .ld-hero-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--panel-2);
+}
+.page-listing-detail .ld-chip {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 27px;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: rgba(17, 18, 23, 0.82);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+}
+.page-listing-detail .ld-chip-tl {
+  top: 14px;
+  left: 14px;
+}
+.page-listing-detail .ld-chip-tr {
+  top: 14px;
+  right: 14px;
+}
+.page-listing-detail .ld-chip-bl {
+  bottom: 14px;
+  left: 14px;
+}
+.page-listing-detail .ld-hero-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(17, 18, 23, 0.72);
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.page-listing-detail .ld-hero:hover .ld-hero-nav,
+.page-listing-detail .ld-hero-nav:focus-visible {
+  opacity: 1;
+}
+.page-listing-detail .ld-hero-nav:hover:not(:disabled) {
+  background: rgba(17, 18, 23, 0.9);
+  color: #fff;
+}
+.page-listing-detail .ld-hero-prev {
+  left: 12px;
+}
+.page-listing-detail .ld-hero-next {
+  right: 12px;
+}
+.page-listing-detail .ld-strip-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 14px;
+}
+.page-listing-detail .ld-strip-head b {
+  font-weight: 600;
+}
+.page-listing-detail .ld-strip-head .muted {
+  font-size: 12.5px;
+}
+.page-listing-detail .ld-img-count {
+  font-size: 12px;
+}
+.page-listing-detail .ld-strip {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 7px;
+}
+.page-listing-detail .ld-thumb {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 56px;
+  aspect-ratio: 1;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #eeeae4;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.page-listing-detail .ld-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.page-listing-detail button.ld-thumb:hover {
+  transform: translateY(-1px);
+}
+.page-listing-detail .ld-thumb.is-active {
+  border-color: transparent;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent), 0 0 20px -2px rgba(124, 108, 246, 0.7);
+}
+.page-listing-detail .ld-thumb.is-empty {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+}
+
+/* ---------------------------------------------------------------- right: words */
+.page-listing-detail .ld-right {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+.page-listing-detail .ld-source {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+}
+.page-listing-detail .ld-source .thumb {
+  background: #f4f1ec;
+}
+/* A transparent design on the checkerboard (video: the source tile, CHECKER). */
+.page-listing-detail .ld-source .thumb.is-transparent {
+  background: repeating-conic-gradient(#eeedf2 0% 25%, #dfdee6 0% 50%) 0 0 / 10.5px 10.5px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+.page-listing-detail .ld-source-text {
+  min-width: 0;
+  flex: 0 1 auto;
+  width: 50%;
+}
+.page-listing-detail .ld-source-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.35;
+}
+.page-listing-detail .ld-source-sub {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+/* The print file under the source design: what an order of the listing is printed from. */
+.page-listing-detail .ld-print {
+  padding: 6px 8px;
+  margin: -2px -8px 0;
+  border-radius: 10px;
+  border: 1px dashed transparent;
+}
+.page-listing-detail .ld-print .ld-source-text {
+  flex: 1 1 auto;
+  width: auto;
+}
+.page-listing-detail .ld-print.is-missing {
+  background: color-mix(in srgb, var(--warning) 8%, transparent);
+}
+.page-listing-detail .ld-print.is-missing .ld-source-name {
+  color: var(--warning);
+  font-weight: 600;
+}
+.page-listing-detail .ld-print.is-drop {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.page-listing-detail .ld-print-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 8px;
+  color: var(--warning);
+  background: var(--warning-soft);
+}
+.page-listing-detail .ld-seo {
+  border: 1px solid color-mix(in srgb, var(--tone) 26%, transparent);
+  cursor: pointer;
+}
+.page-listing-detail .ld-seo:hover {
+  background: color-mix(in srgb, var(--tone) 18%, transparent);
+}
+
+.page-listing-detail .ld-card {
+  padding: 18px 20px;
+}
+.page-listing-detail .ld-card .card-head {
+  margin-bottom: 14px;
+}
+.page-listing-detail .ld-card .card-title {
+  /* IlanDetayEkrani's field labels ("Başlık", "Etiketler") are UI text, 600, unlike the
+     other screens' card titles (base.css draws those in the display face). */
+  font-family: var(--font);
+  word-spacing: normal;
+  font-size: 14.5px;
+}
+.page-listing-detail .ld-card .icon-tile {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  /* The video's FieldHead: a plain tile with an accent icon (Başlık, Etiketler). */
+  color: var(--accent-2);
+}
+.page-listing-detail .ld-hint {
+  margin-left: 4px;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 400;
+}
+.page-listing-detail .ld-counter {
+  height: 26px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid color-mix(in srgb, var(--tone, var(--text-2)) 20%, transparent);
+}
+.page-listing-detail .ld-counter.tone-neutral {
+  background: var(--panel-2);
+  color: var(--muted);
+}
+
+/* Title: big text you can type into */
+.page-listing-detail .ld-title-input {
+  display: block;
+  width: 100%;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.01em;
+  resize: none;
+  overflow: hidden;
+  box-shadow: none;
+}
+.page-listing-detail .ld-title-input:hover {
+  border-color: transparent;
+}
+.page-listing-detail .ld-title-input:focus {
+  box-shadow: 0 0 0 6px var(--panel), 0 0 0 7px var(--accent-line);
+}
+.page-listing-detail .ld-title-bar {
+  height: 4px;
+  margin-top: 14px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--panel-3);
+}
+.page-listing-detail .ld-bar {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--success);
+  transition: width 0.3s var(--ease);
+}
+.page-listing-detail .ld-bar.is-over {
+  background: var(--danger);
+}
+.page-listing-detail .ld-field-error {
+  margin-top: 10px;
+  color: var(--danger);
+  font-size: 12.5px;
+}
+
+/* Tags */
+.page-listing-detail .ld-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.page-listing-detail .ld-tags .tagchip {
+  position: relative;
+  height: 32px;
+}
+/* The remove button sits over the character count and shows on hover or focus, so
+   the chips keep the compact look of the video. */
+.page-listing-detail .ld-tags .tagchip-x {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  margin: 0;
+  transform: translateY(-50%);
+  background: var(--panel-3);
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.page-listing-detail .ld-tags .tagchip:hover .tagchip-x,
+.page-listing-detail .ld-tags .tagchip:focus-within .tagchip-x {
+  opacity: 1;
+}
+.page-listing-detail .ld-tags .tagchip:hover .tagchip-count,
+.page-listing-detail .ld-tags .tagchip:focus-within .tagchip-count {
+  opacity: 0;
+}
+.page-listing-detail .ld-tags .tagchip.is-slot {
+  background: transparent;
+  border-color: #2b2e38;
+}
+.page-listing-detail .ld-tag-slot {
+  gap: 6px;
+  min-width: 150px;
+  color: var(--muted);
+  cursor: text;
+}
+.page-listing-detail .ld-tag-slot:focus-within {
+  border-style: solid;
+  border-color: var(--accent-line);
+  color: var(--accent-2);
+}
+.page-listing-detail .ld-tag-input {
+  width: 120px;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+}
+.page-listing-detail .ld-tag-input::placeholder {
+  color: var(--muted);
+}
+.page-listing-detail .ld-tag-input.is-over {
+  color: var(--danger);
+}
+
+/* Description: a small button in the title card's head, beside the counter (the video's
+   column has no description block, its actions row no such button) and a modal. */
+.page-listing-detail .ld-desc-btn {
+  position: relative;
+  height: 28px;
+  padding: 0 10px;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.page-listing-detail .ld-desc-btn:hover:not(:disabled) {
+  color: var(--text);
+}
+/* The description differs from the saved one. */
+.page-listing-detail .ld-desc-btn.has-change::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent-2);
+  box-shadow: 0 0 0 2px var(--panel);
+}
+.ld-desc-modal .ld-desc-input {
+  display: block;
+  width: 100%;
+  min-height: 260px;
+  max-height: 56vh;
+  font-size: 13.5px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+/* Price / category / status */
+/* The price never shrinks below its text ("$24.90 USD"); the status card never below
+   its widest part (its note moves under the badge when both do not fit on a line);
+   the category takes the rest and ends in "…" (the full path is its tooltip). */
+.page-listing-detail .ld-facts {
+  display: grid;
+  grid-template-columns: minmax(max-content, 1fr) minmax(0, 1.4fr) minmax(min-content, 1.4fr);
+  gap: 14px;
+}
+.page-listing-detail .ld-fact {
+  min-width: 0;
+  padding: 14px 16px 15px;
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+.page-listing-detail .ld-fact-label {
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+.page-listing-detail .ld-price {
+  font-size: 24.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.page-listing-detail .ld-cur {
+  margin-left: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.page-listing-detail .ld-cat {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.page-listing-detail .ld-state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  min-width: 0;
+  font-size: 12.5px;
+}
+.page-listing-detail .ld-state .muted {
+  white-space: nowrap;
+}
+
+/* Bottom actions: the note takes whatever is left (flex-basis 0, so it never pushes
+   a button onto a second line) and wraps (three lines at most); the buttons stay on
+   one line at the right. They only wrap when the column is too narrow for them. */
+.page-listing-detail .ld-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+.page-listing-detail .ld-note {
+  flex: 1 1 0;
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 4px;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+.page-listing-detail .ld-note .icon {
+  flex: none;
+}
+.page-listing-detail .ld-note span {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+.page-listing-detail .ld-actions .btn {
+  flex: none;
+}
+.page-listing-detail .ld-actions .btn-lg {
+  height: 44px;
+}
+/* With unsaved edits four buttons share the row (Vazgeç, Kaydet, Etsy'de aç, Yayınla):
+   tighter buttons and an icon-only "Etsy'de aç" keep "Yayınla" on the line. */
+.page-listing-detail .ld-actions.is-dirty .btn-lg {
+  padding: 0 14px;
+}
+.page-listing-detail .ld-actions.is-dirty .ld-open {
+  width: 46px;
+  padding: 0;
+  justify-content: center;
+}
+.page-listing-detail .ld-actions.is-dirty .ld-open .btn-label {
+  display: none;
+}
+/* With unsaved edits the save / discard buttons take the note's place. */
+.page-listing-detail .ld-actions.is-dirty .ld-note {
+  display: none;
+}
+
+.page-listing-detail .ld-problem .empty {
+  padding: 56px 24px;
+}
+
+/* SEO issues popover (in <body>) */
+.ld-issues-pop {
+  padding: 14px;
+}
+.ld-issues-head {
+  margin-bottom: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.ld-issues {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ld-issue {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--text-2);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.ld-issue .icon {
+  flex: none;
+  margin-top: 1px;
+  color: var(--tone);
+}
+.ld-issues-none {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--success);
+  font-size: 13px;
+}
+.ld-issues-foot {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  font-size: 11.5px;
+}
+
+/* ---------------------------------------------------------------- narrower windows */
+@media (max-width: 1400px) {
+  .page-listing-detail .ld-facts {
+    grid-template-columns: minmax(max-content, 1fr) minmax(0, 1.55fr) minmax(min-content, 1.25fr);
+  }
+  .page-listing-detail .ld-fact {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}
+@media (max-width: 1180px) {
+  .page-listing-detail .ld-actions .btn-lg {
+    padding: 0 14px;
+  }
+  .page-listing-detail .ld-facts {
+    grid-template-columns: minmax(max-content, 1fr) minmax(min-content, 1fr);
+  }
+  .page-listing-detail .ld-facts .ld-fact:nth-child(2) {
+    grid-column: span 2;
+    order: 3;
+  }
+}
+/* A short window (1280x720): tighter cards, so the price, category, status and the
+   actions stay in view as in the video. */
+@media (max-height: 760px) {
+  .page-listing-detail .ld-right {
+    gap: 10px;
+  }
+  .page-listing-detail .ld-card {
+    padding: 12px 16px 13px;
+  }
+  .page-listing-detail .ld-card .card-head {
+    margin-bottom: 10px;
+  }
+  .page-listing-detail .ld-title-input {
+    font-size: 17px;
+    line-height: 25px;
+  }
+  .page-listing-detail .ld-title-bar {
+    margin-top: 10px;
+  }
+  .page-listing-detail .ld-tags {
+    gap: 7px;
+  }
+  .page-listing-detail .ld-tags .tagchip {
+    height: 30px;
+  }
+  .page-listing-detail .ld-fact {
+    padding: 11px 14px 12px;
+  }
+  .page-listing-detail .ld-fact-label {
+    margin-bottom: 5px;
+  }
+  .page-listing-detail .ld-price {
+    font-size: 22px;
+  }
+}
+@media (max-width: 960px) {
+  .page-listing-detail .ld-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

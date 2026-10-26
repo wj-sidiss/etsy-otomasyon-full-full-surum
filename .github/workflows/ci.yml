@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.9", "3.13"]
+        include:
+          # Full version sweep on Linux only; Windows is here to catch console
+          # encoding regressions, which do not depend on the Python version.
+          - os: ubuntu-latest
+            python-version: "3.10"
+          - os: ubuntu-latest
+            python-version: "3.11"
+          - os: ubuntu-latest
+            python-version: "3.12"
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Lint
+        if: matrix.os == 'ubuntu-latest'
+        run: ruff check .
+
+      - name: Test
+        # The suite is offline by design — no Etsy credentials are needed or used.
+        run: pytest -q
+
+      - name: Smoke-test the CLI
+        run: |
+          etsyotomasyon --version
+          etsyotomasyon listings template -o template-check.csv
+
+      # Redirected output is what breaks on Windows: the console renders Unicode,
+      # but a pipe falls back to the legacy ANSI code page, which cannot encode the
+      # status markers. Run without PYTHONIOENCODING so a regression actually fails.
+      - name: Bundled example must pass its own dry-run, with output redirected
+        shell: bash
+        env:
+          PYTHONIOENCODING: ""
+        run: |
+          etsyotomasyon listings push examples/listings.csv --dry-run > dry-run.log 2>&1
+          cat dry-run.log
