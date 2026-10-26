@@ -32,7 +32,7 @@ def release(tag: str = "v0.3.1", **extra) -> dict:
     """A release as GitHub's /releases/latest returns it (only the fields read here)."""
     return {
         "tag_name": tag,
-        "html_url": f"https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/releases/tag/{tag}",
+        "html_url": f"https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/releases/tag/{tag}",
         "name": f"etsyotomasyon {tag}",
         "body": "## Added\r\n- A new version notice <script>alert(1)</script>",
         "published_at": "2026-09-20T10:00:00Z",
@@ -124,7 +124,7 @@ def test_parse_release_keeps_only_what_the_page_shows():
     assert got == {
         "version": "0.3.1",
         "tag": "v0.3.1",
-        "url": "https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/releases/tag/v0.3.1",
+        "url": "https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/releases/tag/v0.3.1",
         "name": "etsyotomasyon v0.3.1",
         # Plain text, as it came (the page shows it with textContent), with \n line ends.
         "notes": "## Added\n- A new version notice <script>alert(1)</script>",

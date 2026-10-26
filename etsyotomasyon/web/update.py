@@ -41,7 +41,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 log = logging.getLogger("etsyotomasyon.web")
 
-REPO = "wj-sidiss/etsy-otomasyon-full-full-surum-2"
+REPO = "wj-sidiss/etsy-otomasyon-full-full-surum"
 # GitHub answers a renamed repository with a redirect, which is followed.
 LATEST_URL = f"https://api.github.com/repos/{REPO}/releases/latest"
 RELEASES_PAGE = f"https://github.com/{REPO}/releases/latest"

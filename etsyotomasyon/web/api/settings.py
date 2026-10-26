@@ -33,7 +33,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ..router import Router
 
 LICENSE = "MIT"
-REPO_URL = "https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2"
+REPO_URL = "https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum"
 # setup.build_steps numbers its steps; the page words each one by this key.
 STEP_KEYS = {
     1: "python", 2: "installed", 3: "shop", 4: "app", 5: "credentials", 6: "redirect",

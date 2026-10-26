@@ -1,6 +1,10 @@
 # etsyotomasyon
 
-[![CI](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/actions/workflows/ci.yml/badge.svg)](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/actions/workflows/ci.yml)
+<p align="center"><a href="docs/etsyotomasyon-demo-tr.mp4"><img src="docs/demo-preview.gif" alt="Demo" width="720"></a></p>
+
+**Demo / Demo video:** [Türkçe](docs/etsyotomasyon-demo-tr.mp4) · [English](docs/etsyotomasyon-demo-en.mp4)
+
+[![CI](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/actions/workflows/ci.yml/badge.svg)](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/actions/workflows/ci.yml)
 [![Python 3.9–3.13](https://img.shields.io/badge/python-3.9%E2%80%933.13-blue)](https://www.python.org/downloads/)
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-green)](LICENSE)
 [![Etsy Open API v3](https://img.shields.io/badge/Etsy-Open%20API%20v3-orange)](https://developers.etsy.com/documentation/)
@@ -50,7 +54,7 @@ atlandığı için çıkar.
    bir kopyalama düğmesiyle gösterir.
 5. **Anahtarları kopyalayın:** aynı sayfadaki **Keystring** ve **Shared secret** (göz
    ikonu). İkisi birden gerekir ve aynı uygulamadan olmalı.
-6. **etsyotomasyon'i indirip açın:** [en son sürüm](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/releases/latest).
+6. **etsyotomasyon'i indirip açın:** [en son sürüm](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/releases/latest).
    Tarayıcınız **Mağaza Bağlantısı** ekranında açılır. Anahtarları yapıştırıp **Kaydet ve
    kontrol et**'e basın, sonra **Bağlan**'a basın ve açılan Etsy sayfasında izin verin
    (ilk seferde callback adresini ekleyip eklemediğiniz sorulur). Bağlantı kayıtlı kalır;
@@ -85,7 +89,7 @@ one-time step). Most setup failures come from a skipped step:
    appears only after approval. etsyotomasyon's **Mağaza Bağlantısı** screen shows the address
    with a copy button.
 5. Copy the **Keystring** and the **Shared secret** from the same app.
-6. [Download etsyotomasyon](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/releases/latest) and
+6. [Download etsyotomasyon](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/releases/latest) and
    open it. Your browser opens on **Mağaza Bağlantısı** (Shop connection): paste both keys,
    press **Save and check** (*Kaydet ve kontrol et*), then **Connect** (*Bağlan*) and
    approve on Etsy. The connection is remembered.
@@ -196,7 +200,7 @@ the same one for the command line.
 
 ## Download and first run
 
-**[Download the latest release →](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/releases/latest)**
+**[Download the latest release →](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/releases/latest)**
 
 | Your computer | File |
 |---|---|
@@ -276,7 +280,7 @@ ZIP** on GitHub and unzip it instead of `git clone`.
 **Windows** (PowerShell or Command Prompt):
 
 ```bat
-git clone https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2.git
+git clone https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum.git
 cd etsyotomasyon
 python -m venv .venv
 .venv\Scripts\python -m pip install -e .
@@ -289,7 +293,7 @@ PowerShell's *"running scripts is disabled"* message cannot get in the way.
 **macOS / Linux:**
 
 ```bash
-git clone https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2.git
+git clone https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum.git
 cd etsyotomasyon
 python3 -m venv .venv
 source .venv/bin/activate
@@ -545,7 +549,7 @@ yazar. Komut satırında aynı ayarı `etsyotomasyon drop watermark` yapar.
 
 ## İndirme ve ilk açılış
 
-**[Son sürümü indirin →](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/releases/latest)**
+**[Son sürümü indirin →](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/releases/latest)**
 
 | Bilgisayarınız | Dosya |
 |---|---|
@@ -625,7 +629,7 @@ Download ZIP** ile indirip zip'i açın, `git clone` yerine onu kullanın.
 **Windows** (PowerShell ya da Komut İstemi):
 
 ```bat
-git clone https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2.git
+git clone https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum.git
 cd etsyotomasyon
 python -m venv .venv
 .venv\Scripts\python -m pip install -e .
@@ -638,7 +642,7 @@ yüzden PowerShell'in *"betik çalıştırma devre dışı"* uyarısı engel olm
 **macOS / Linux:**
 
 ```bash
-git clone https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2.git
+git clone https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum.git
 cd etsyotomasyon
 python3 -m venv .venv
 source .venv/bin/activate

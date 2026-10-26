@@ -43,7 +43,7 @@ The downloaded app needs nothing else: see [README → Download and first
 run](README.md#download-and-first-run). From source, with Python 3.9–3.13:
 
 ```bash
-git clone https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2.git
+git clone https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum.git
 cd etsyotomasyon
 python -m venv .venv
 source .venv/bin/activate       # Windows: .venv\Scripts\activate

@@ -110,7 +110,7 @@ tab and it stops by itself about 90 seconds later.
 
 Running from source on Windows, macOS or Linux (Python 3.9–3.13): `pip install -e .`,
 then `etsyotomasyon desktop`. See the
-[README](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2#run-from-source-windows-macos-linux).
+[README](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum#run-from-source-windows-macos-linux).
 
 ## Troubleshooting
 
@@ -195,7 +195,7 @@ sekmeyi kapatın, yaklaşık 90 saniye sonra kendiliğinden kapanır.
 
 Kaynak koddan çalıştırmak için (Windows, macOS, Linux; Python 3.9–3.13): `pip install -e .`,
 sonra `etsyotomasyon desktop`. Ayrıntılar
-[README'de](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2#kaynak-koddan-çalıştırma-windows-macos-linux).
+[README'de](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum#kaynak-koddan-çalıştırma-windows-macos-linux).
 
 ## Sık karşılaşılan hatalar
 
@@ -221,4 +221,4 @@ Geri dönüş adresi Etsy uygulamanızda kayıtlı değil. <https://www.etsy.com
 
 ---
 
-What changed: see [CHANGELOG.md](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/blob/main/CHANGELOG.md).
+What changed: see [CHANGELOG.md](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/blob/main/CHANGELOG.md).

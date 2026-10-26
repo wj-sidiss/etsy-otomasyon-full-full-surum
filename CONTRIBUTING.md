@@ -6,7 +6,7 @@ read the whole thing in an afternoon, and that is a feature worth protecting.
 ## Getting set up
 
 ```bash
-git clone https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2.git
+git clone https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum.git
 cd etsyotomasyon
 python -m venv .venv
 source .venv/bin/activate       # Windows: .venv\Scripts\activate

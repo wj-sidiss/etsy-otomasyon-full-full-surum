@@ -27,7 +27,7 @@ project is being worked on.
 ## Reporting
 
 Report a problem privately to the maintainer through
-[GitHub's private vulnerability reporting](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/security/advisories/new),
+[GitHub's private vulnerability reporting](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/security/advisories/new),
 which also serves as a private channel for conduct reports. Reports stay confidential.
 
 The maintainer will respond as they are able. This is an unfunded side project, so

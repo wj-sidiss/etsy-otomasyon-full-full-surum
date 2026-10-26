@@ -328,7 +328,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The repository is now `wj-sidiss/etsy-otomasyon-full-full-surum-2`; the old address redirects.
+- The repository is now `wj-sidiss/etsy-otomasyon-full-full-surum`; the old address redirects.
 
 ## [0.3.0] — 2026-09-27
 
@@ -653,10 +653,10 @@ Recorded here and in the code so nobody has to re-derive them:
 - There is no idempotency key, so non-idempotent writes are never retried on a timeout
   or a 5xx — a repeat would mean a duplicate listing, or a second email to a buyer.
 
-[Unreleased]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/compare/v0.3.3...HEAD
-[0.3.3]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/compare/v0.3.2...v0.3.3
-[0.3.2]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/compare/v0.3.1...v0.3.2
-[0.3.1]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/releases/tag/v0.3.1
-[0.3.0]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/releases/tag/v0.3.0
-[0.2.0]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/releases/tag/v0.2.0
-[0.1.0]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/releases/tag/v0.1.0
+[Unreleased]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.3.3...HEAD
+[0.3.3]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.3.2...v0.3.3
+[0.3.2]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.3.1...v0.3.2
+[0.3.1]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/releases/tag/v0.3.1
+[0.3.0]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/releases/tag/v0.3.0
+[0.2.0]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/releases/tag/v0.2.0
+[0.1.0]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/releases/tag/v0.1.0

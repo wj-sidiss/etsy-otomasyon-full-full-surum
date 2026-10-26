@@ -229,7 +229,7 @@ class EtsyClient:
             # Both halves, colon-joined. See Config.api_key_header for why.
             "x-api-key": self.config.api_key_header,
             "Accept": "application/json",
-            "User-Agent": "etsyotomasyon/0.1 (+https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2)",
+            "User-Agent": "etsyotomasyon/0.1 (+https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum)",
         }
         if authed:
             headers["Authorization"] = f"Bearer {self._current_token().access_token}"

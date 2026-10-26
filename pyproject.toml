@@ -47,9 +47,9 @@ dev = ["pytest>=8.0", "ruff>=0.5"]
 heic = ["pillow-heif>=0.16"]
 
 [project.urls]
-Homepage = "https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2"
-Issues = "https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/issues"
-Changelog = "https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum"
+Issues = "https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/issues"
+Changelog = "https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/blob/main/CHANGELOG.md"
 
 [project.scripts]
 etsyotomasyon = "etsyotomasyon.cli:main"

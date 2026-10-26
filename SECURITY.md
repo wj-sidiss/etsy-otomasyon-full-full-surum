@@ -8,7 +8,7 @@ reach. This page states exactly what it does with your credentials and data.
 ## Reporting a vulnerability
 
 Please report privately through
-[GitHub's private vulnerability reporting](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum-2/security/advisories/new)
+[GitHub's private vulnerability reporting](https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/security/advisories/new)
 rather than opening a public issue.
 
 Include what you did, what happened, and what you expected. A proof of concept helps.
@@ -53,7 +53,7 @@ etsyotomasyon itself makes network requests to these hosts only:
 | `api.pinterest.com` (`api-sandbox.pinterest.com` for a sandbox app) | Pinterest's API, only after you set up Pinterest |
 | `i.etsystatic.com` | Etsy's public image server: a plain GET of the template listing's full-size photos, only when you add them as info images on **Şablon İlan**. No API key, sign-in or cookie is sent; only `https` addresses on `*.etsystatic.com` are fetched, a redirect is not followed, and each file is capped at 20 MB. |
 | `www.tcmb.gov.tr` | `kurlar/today.xml`, the Central Bank of Turkey's public exchange-rate file, for the TRY amounts on **Kâr-Zarar**. A plain GET at most once a day; nothing is sent. |
-| `api.github.com` | `/repos/wj-sidiss/etsy-otomasyon-full-full-surum-2/releases/latest`, to see whether a newer etsyotomasyon is out. A plain GET about 10 seconds after each start of the app (unless it asked less than an hour ago) and then once a day while it runs (an hour later after a failed try). Nothing is sent but the request itself with a `User-Agent: etsyotomasyon/<version>` header: no identifier, no cookie, nothing about you or your shop. Off with **Ayarlar → Yeni sürümleri denetle** (the automatic check) or `ETSYOTOMASYON_NO_UPDATE_CHECK=1` (every check). |
+| `api.github.com` | `/repos/wj-sidiss/etsy-otomasyon-full-full-surum/releases/latest`, to see whether a newer etsyotomasyon is out. A plain GET about 10 seconds after each start of the app (unless it asked less than an hour ago) and then once a day while it runs (an hour later after a failed try). Nothing is sent but the request itself with a `User-Agent: etsyotomasyon/<version>` header: no identifier, no cookie, nothing about you or your shop. Off with **Ayarlar → Yeni sürümleri denetle** (the automatic check) or `ETSYOTOMASYON_NO_UPDATE_CHECK=1` (every check). |
 
 Nothing else. There is no telemetry and no account with this project. The update check
 reads a public GitHub page; its answer is treated as untrusted: the release notes are
