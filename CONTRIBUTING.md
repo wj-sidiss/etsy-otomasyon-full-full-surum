@@ -7,7 +7,7 @@ read the whole thing in an afternoon, and that is a feature worth protecting.
 
 ```bash
 git clone https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum.git
-cd etsyotomasyon
+cd etsy-otomasyon-full-full-surum
 python -m venv .venv
 source .venv/bin/activate       # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"

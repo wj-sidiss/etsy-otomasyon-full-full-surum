@@ -281,7 +281,7 @@ ZIP** on GitHub and unzip it instead of `git clone`.
 
 ```bat
 git clone https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum.git
-cd etsyotomasyon
+cd etsy-otomasyon-full-full-surum
 python -m venv .venv
 .venv\Scripts\python -m pip install -e .
 .venv\Scripts\etsyotomasyon desktop
@@ -294,7 +294,7 @@ PowerShell's *"running scripts is disabled"* message cannot get in the way.
 
 ```bash
 git clone https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum.git
-cd etsyotomasyon
+cd etsy-otomasyon-full-full-surum
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -e .
@@ -305,7 +305,7 @@ On Debian or Ubuntu, `sudo apt install python3-venv` first if `venv` is missing.
 
 `etsyotomasyon desktop` starts the app and opens your browser, exactly like the download.
 `python -m etsyotomasyon desktop` does the same thing when the `etsyotomasyon` command is not on
-your PATH. Next time, run the same command from the `etsyotomasyon` folder. To update,
+your PATH. Next time, run the same command from the `etsy-otomasyon-full-full-surum` folder. To update,
 run `git pull` and then the `pip install -e .` line again.
 
 | Option | What it does |
@@ -630,7 +630,7 @@ Download ZIP** ile indirip zip'i açın, `git clone` yerine onu kullanın.
 
 ```bat
 git clone https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum.git
-cd etsyotomasyon
+cd etsy-otomasyon-full-full-surum
 python -m venv .venv
 .venv\Scripts\python -m pip install -e .
 .venv\Scripts\etsyotomasyon desktop
@@ -643,7 +643,7 @@ yüzden PowerShell'in *"betik çalıştırma devre dışı"* uyarısı engel olm
 
 ```bash
 git clone https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum.git
-cd etsyotomasyon
+cd etsy-otomasyon-full-full-surum
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -e .
@@ -654,7 +654,7 @@ Debian ya da Ubuntu'da `venv` eksikse önce `sudo apt install python3-venv`.
 
 `etsyotomasyon desktop` uygulamayı başlatır ve tarayıcıyı açar, indirilen sürümle aynıdır.
 `etsyotomasyon` komutu PATH'te değilse `python -m etsyotomasyon desktop` aynı işi yapar. Sonraki
-seferlerde aynı komutu `etsyotomasyon` klasöründe çalıştırın. Güncellemek için `git pull`,
+seferlerde aynı komutu `etsy-otomasyon-full-full-surum` klasöründe çalıştırın. Güncellemek için `git pull`,
 ardından `pip install -e .` satırını yeniden çalıştırın.
 
 | Seçenek | Ne yapar |

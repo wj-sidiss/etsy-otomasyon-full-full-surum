@@ -874,10 +874,10 @@ class OrdersApi:
                     log.warning("could not prepare order %s", rid, exc_info=True)
                 job.progress(n, len(receipts), label=str(rid))
             if prepared:
-                self.ctx.notify("orders", "print_ready", {"n": prepared}, tone="success",
+                self.ctx.notify("orders", "notify.print_ready", {"n": prepared}, tone="success",
                                 link="/siparisler")
             if lacking:
-                self.ctx.notify("orders", "print_missing", {"n": lacking}, tone="warning",
+                self.ctx.notify("orders", "notify.print_missing", {"n": lacking}, tone="warning",
                                 link="/siparisler", replace=True)
             return {"prepared": prepared, "files": files, "lacking": lacking}
 

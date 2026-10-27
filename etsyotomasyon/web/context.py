@@ -12,7 +12,7 @@ Phase-2 handlers receive it as `req.ctx` (and as `ctx` in `register(r, ctx)`):
     ctx.set_status_soon()                # re-check shortly, in the background
     ctx.jobs.start(kind, title_key, fn, params=..., cancellable=True)
     ctx.events.publish(topic, data)      # SSE
-    ctx.notify("orders", "shipped", {"n": 3}, tone="success", link="/siparisler")
+    ctx.notify("orders", "notify.shipped", {"n": 3}, tone="success", link="/siparisler")
     ctx.anonymise("Real Shop Name")      # "Mağaza 1" / "Shop 1" when the hide-names pref is on
     ctx.language                         # "tr" | "en"
     ctx.reset_client()                   # after saving keys, connecting or disconnecting

@@ -87,3 +87,22 @@ def test_the_saved_language_wins_over_the_system(web, monkeypatch):
     assert web.client.get("/api/session").json()["language"] == "tr"
     web.client.post("/api/prefs", json={"language": "en"})
     assert web.client.get("/api/session").json()["language"] == "en"
+
+
+NOTIFY_CALL = __import__("re").compile(r"""\.notify\(\s*["']([\w-]+)["']\s*,\s*["']([\w.]+)["']""")
+
+
+@pytest.mark.skipif(not FILES, reason="the UI's string files are not there yet")
+def test_every_notification_key_in_the_code_has_a_string():
+    # The bell shows t(ns + ":" + key); a key without its string shows as raw text
+    # (orders:print_missing was shown that way until 0.3.3).
+    package = STATIC_DIR.parent.parent
+    missing = []
+    for source in sorted(package.rglob("*.py")):
+        for ns, key in NOTIFY_CALL.findall(source.read_text(encoding="utf-8")):
+            path = I18N_DIR / f"{ns}.json"
+            data = json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
+            for lang in ("tr", "en"):
+                if key not in data.get(lang, {}):
+                    missing.append(f"{source.name}: {ns}:{key} ({lang})")
+    assert not missing, missing

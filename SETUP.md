@@ -44,7 +44,7 @@ run](README.md#download-and-first-run). From source, with Python 3.9–3.13:
 
 ```bash
 git clone https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum.git
-cd etsyotomasyon
+cd etsy-otomasyon-full-full-surum
 python -m venv .venv
 source .venv/bin/activate       # Windows: .venv\Scripts\activate
 pip install -e .

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- The bell and the Panel showed the raw text `orders:print_ready` / `orders:print_missing` after the order print-file job ran: the two notifications now use their strings. A new test checks that every notification key in the code has a Turkish and an English string.
+- The from-source steps in README, SETUP and CONTRIBUTING said `cd etsyotomasyon`; the cloned folder is `etsy-otomasyon-full-full-surum`.
+
 ### Added
 - **Bleed for print files.** The *Baskı dosyası* window has a *Taşma payı* (none, 0.25 in or
   0.5 in, remembered): the file runs that far past every edge, so a printer who trims a little
