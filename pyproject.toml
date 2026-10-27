@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "etsyotomasyon"
-version = "0.3.3"
+version = "0.4.0"
 description = "Open-source Etsy seller automation that runs on your own computer: a local web app in your browser plus a CLI for drafts from your designs, bulk listings, orders and tracking, SEO and profit, via the official Etsy Open API v3."
 readme = "README.md"
 license = { file = "LICENSE" }

@@ -1,3 +1,25 @@
+**0.4.0 takes you from the sale to the printer.** When an order comes in, the app makes its
+**print-ready files** and an **invoice sheet** with the product's picture, in one click and
+without you opening anything: the pattern repeats exactly across the roll's width, a tile
+whose edges do not meet is made seamless, the file can run past the edges (**bleed**), and
+150 or 300 dpi is yours to choose. **Connect your own production partner** and send the order
+to it in one click. Every listing keeps its **print file**, and **İlanlar** shows which ones
+have none. Each order shows **when it must ship by**.
+
+Also: the **SEO** page's competitor research now shows the price range, favourites, shared
+title phrases and the most favourited listings, and the audit checks your **photos**.
+
+**0.4.0 satıştan baskıya kadar götürür.** Sipariş gelince uygulama, siz hiçbir şey açmadan,
+tek tıkla **baskıya hazır dosyaları** ve ürünün resmi olan bir **fatura sayfasını** hazırlar:
+desen rulonun genişliğinde tam sayıda tekrar eder, kenarları tutmayan karo dikişsiz yapılır,
+dosya kenarlardan taşabilir (**taşma payı**) ve 150 ya da 300 dpi'ı siz seçersiniz. **Kendi
+üretim ortağınızı bağlayın**, siparişi tek tıkla ona gönderin. Her ilan **baskı dosyasını**
+saklar, **İlanlar** hangilerinde olmadığını gösterir. Her sipariş **en geç ne zaman kargoya
+verilmesi gerektiğini** gösterir.
+
+Ayrıca: **SEO** sayfasındaki rakip araştırması artık fiyat aralığını, beğeniyi, ortak başlık
+ifadelerini ve en çok beğenilen ilanları gösteriyor; denetim **fotoğraflarınıza** da bakıyor.
+
 **0.3.3 makes your mockups look real.** The design now takes the mockup's own light, folds
 and fabric texture (**Gerçekçilik**), can be placed on four corners for angled frames and
 walls (**4 köşe**), and wraps around mugs (**Kavis**). Set them per mockup in **Mockuplar**;
