@@ -230,6 +230,61 @@ def test_without_the_flat_render_only_the_mockups_go_up(studio):
     assert all("--flat" not in p.name for p in report.items[0].images)
 
 
+class VideoClient(Client):
+    def __init__(self, ws, **kw):
+        super().__init__(ws, **kw)
+        self.videos = []
+        self.video_error = None
+
+    def upload_listing_video(self, listing_id, path, *, name=None):
+        if self.video_error is not None:
+            raise self.video_error
+        self.videos.append((listing_id, path.name, path.is_file()))
+        return {"video_id": 5}
+
+
+def _fake_video(monkeypatch):
+    def make(pictures, out, **kw):
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_bytes(b"video")
+        return out
+    monkeypatch.setattr(stream.video, "make", make)
+
+
+def test_a_run_with_video_attaches_one_to_each_draft(studio, monkeypatch):
+    ws, template = studio
+    _fake_video(monkeypatch)
+    _artwork(ws.products / "but-first-coffee.png")
+    client = VideoClient(ws)
+    report = _run(ws, template, client, video=True)
+    item = report.items[0]
+    assert item.status == stream.OK
+    assert client.videos == [(item.listing_id, f"{item.listing_id}.mp4", True)]
+    assert _history(ws)[SHOP][item.name]["video"] is True
+
+
+def test_no_video_is_made_unless_asked(studio, monkeypatch):
+    ws, template = studio
+    _fake_video(monkeypatch)
+    _artwork(ws.products / "but-first-coffee.png")
+    client = VideoClient(ws)
+    _run(ws, template, client)
+    assert client.videos == []
+
+
+def test_a_video_that_fails_is_a_warning_and_the_draft_stays(studio, monkeypatch):
+    ws, template = studio
+    _fake_video(monkeypatch)
+    _artwork(ws.products / "but-first-coffee.png")
+    client = VideoClient(ws)
+    client.video_error = EtsyApiError(400, "bad video", method="POST", path="/videos")
+    report = _run(ws, template, client, video=True)
+    item = report.items[0]
+    assert item.status == stream.OK and item.listing_id
+    assert [w.code for w in item.warnings if w.code == "video"] == ["video"]
+    assert "video" not in _history(ws)[SHOP][item.name]
+
+
 def test_drafts_never_carry_a_state_or_an_id(studio):
     ws, template = studio
     _artwork(ws.products / "but-first-coffee.png")

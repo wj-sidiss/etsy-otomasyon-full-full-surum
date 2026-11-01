@@ -469,7 +469,12 @@
     "ready.section_empty": "Mağazanızda bölüm yok, taslaklar bölümsüz oluşturulur. Bölümleri Etsy'de Mağaza Yöneticisi'nden ekleyebilirsiniz.",
     "ready.section_unavailable": "Mağaza bölümleri şu an okunamadı: taslaklar şablondaki bölüme gider.",
     "ready.section_template_gone": "Şablon ilanın bölümü artık mağazanızda yok: taslaklar bölümsüz oluşturulur. İsterseniz bir bölüm seçin.",
-    "ready.section_remembered_gone": "Son seçtiğiniz bölüm ({name}) artık mağazanızda yok; şablondaki kullanılacak."
+    "ready.section_remembered_gone": "Son seçtiğiniz bölüm ({name}) artık mağazanızda yok; şablondaki kullanılacak.",
+    "ready.video": "Video ekle",
+    "ready.video_sub": "her taslağa fotoğraflarından 12 saniyelik bir ürün videosu eklenir",
+    "ready.video_tip": "ffmpeg ile hazırlanır; Etsy ilan videosu 5-15 saniye, MP4, en çok 100 MB olabilir",
+    "ready.video_missing": "ffmpeg kurulu değil (ücretsiz: ffmpeg.org); kurup uygulamayı yeniden açın",
+    "warn.video": "Taslak oluştu ama videosu eklenemedi: {message}"
   },
   "en": {
     "title": "Upload designs",
@@ -941,6 +946,11 @@
     "ready.section_empty": "Your shop has no sections, so the drafts get none. You can add sections in Etsy's Shop Manager.",
     "ready.section_unavailable": "The shop's sections could not be read right now: the drafts go into the template's section.",
     "ready.section_template_gone": "The template listing's section is no longer in your shop: the drafts get no section. Pick one if you like.",
-    "ready.section_remembered_gone": "The section you picked last time ({name}) is no longer in your shop; the template's is used."
+    "ready.section_remembered_gone": "The section you picked last time ({name}) is no longer in your shop; the template's is used.",
+    "ready.video": "Add a video",
+    "ready.video_sub": "each draft gets a 12-second product video made from its photos",
+    "ready.video_tip": "Made with ffmpeg; an Etsy listing video is 5 to 15 seconds, MP4, up to 100 MB",
+    "ready.video_missing": "ffmpeg is not installed (free: ffmpeg.org); install it and reopen the app",
+    "warn.video": "The draft was made but its video was not added: {message}"
   }
 }

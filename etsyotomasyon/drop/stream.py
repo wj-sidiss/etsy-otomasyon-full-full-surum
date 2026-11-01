@@ -106,6 +106,7 @@ from . import (
     pipeline,
     printfiles,
     seeds,
+    video,
 )
 from . import watermark as watermark_mod
 from .template import Template
@@ -291,6 +292,7 @@ def run_stream(
     dry_run: bool = False,
     opaque: str = OPAQUE_AS_IS,
     watermark: bool = True,
+    video: bool = False,
 ) -> StreamReport:
     """Create a draft for every product in 2-PRODUCTS the history has not seen yet.
 
@@ -302,6 +304,9 @@ def run_stream(
     `watermark`: stamp the workspace's watermark when it is on and takes this template
     (drop.watermark.for_run); False never stamps. A watermark that is on but cannot be
     read stops the run before anything is sent.
+    `video`: after each draft, make a short video from its pictures (drop.video, needs
+    ffmpeg) and attach it. A video that cannot be made or attached is a warning on the
+    draft; the draft itself stays.
     Raises ValidationError / UploadLocked for problems that stop the whole run before
     anything is sent; everything that concerns one product lands on that product.
     """
@@ -309,6 +314,7 @@ def run_stream(
         workspace, template, client, mockups=list(mockups), on_event=on_event, cancel=cancel,
         concurrency=concurrency, include_flat=include_flat, sample=sample,
         use_cache=use_cache, dry_run=dry_run, opaque=opaque, watermark=watermark,
+        video=video,
     ).run()
 
 
@@ -481,7 +487,8 @@ class _Run:
     def __init__(self, workspace: Workspace, template: Template, client: Any, *,
                  mockups: list[Path], on_event: OnEvent | None, cancel: Any,
                  concurrency: int, include_flat: bool, sample: int, use_cache: bool,
-                 dry_run: bool, opaque: str = OPAQUE_AS_IS, watermark: bool = True) -> None:
+                 dry_run: bool, opaque: str = OPAQUE_AS_IS, watermark: bool = True,
+                 video: bool = False) -> None:
         self.ws = workspace
         self.template = template
         self.listing_type = template.fields.get("type") or "physical"
@@ -501,6 +508,7 @@ class _Run:
         self.sample = sample
         self.use_cache = use_cache
         self.dry_run = dry_run
+        self.video = bool(video)
         if opaque not in OPAQUE_CHOICES:
             raise ValueError(f"opaque must be one of {OPAQUE_CHOICES}")
         self.opaque = opaque
@@ -1283,6 +1291,23 @@ class _Run:
             except OSError:
                 log.warning("could not write %s", self.csv_path)
 
+    def _video(self, item: StreamItem, entry: dict[str, Any]) -> None:
+        """Make the draft's video from its own pictures and attach it. Never fails the
+        draft: what goes wrong is a warning on it."""
+        pictures = [p for p in item.images if p != item.flat] or list(item.images)
+        out = self.out_dir / "videos" / f"{item.listing_id}{video.SUFFIX}"
+        try:
+            video.make(pictures, out)
+            self.client.upload_listing_video(item.listing_id, out)
+        except ValidationError as exc:
+            self._warn(item, "video", str(exc), "draft", listing_id=item.listing_id)
+            return
+        except (AuthError, EtsyApiError, OSError) as exc:
+            self._warn(item, "video", str(exc), "draft", listing_id=item.listing_id)
+            return
+        entry["video"] = True
+        automation.save_history(self.history_file, self.state)
+
     def _draft(self, item: StreamItem) -> bool:
         """Create one draft. False when it failed (for the stop-after-failures rule)."""
         assert item.row is not None
@@ -1367,6 +1392,8 @@ class _Run:
         uploaded = {"images_uploaded": item.images_uploaded,
                     "files_uploaded": item.files_uploaded, **counts}
         if result.status == "ok":
+            if self.video and item.listing_id:
+                self._video(item, entry)
             self._step(item, "draft", DONE, listing_id=item.listing_id, **uploaded)
             self._finish(item, OK)
             return True

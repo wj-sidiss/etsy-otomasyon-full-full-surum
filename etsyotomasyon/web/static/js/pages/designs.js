@@ -1510,6 +1510,27 @@ class DesignsPage {
     // listing photos, set on the Mockuplar page.
     const wmLine = this.watermarkLine(p, () => m.close());
     if (wmLine) notes.push(wmLine);
+    // "Video ekle": a 12-second video of each draft's pictures, made with ffmpeg (free)
+    // and attached to the listing. Remembered between runs.
+    const videoOk = !!(p.video && p.video.available);
+    let videoOn = videoOk && this.videoPref();
+    const videoBox = h("input", {
+      type: "checkbox",
+      checked: videoOn,
+      disabled: !videoOk,
+      onChange: (e) => {
+        videoOn = e.target.checked;
+        this.saveVideoPref(videoOn);
+      },
+    });
+    notes.push(
+      h(
+        "label",
+        { class: cx("dz-modal-video", !videoOk && "is-off"), title: videoOk ? t("ready.video_tip") : t("ready.video_missing") },
+        videoBox,
+        h("span", null, h("strong", null, t("ready.video")), " · ", videoOk ? t("ready.video_sub") : t("ready.video_missing")),
+      ),
+    );
     const junk = p.items.filter((x) => x.junk_reason || x.too_many).length;
     if (junk) notes.push(infoNote({ tone: "warning", icon: "alert", text: t("ready.junk", { n: junk }) }));
     const noPhotos = p.items.filter((x) => x.no_photos && !x.junk_reason).length;
@@ -1654,7 +1675,7 @@ class DesignsPage {
             const choice = await section.value();
             if (section.closed) return;
             m.close();
-            this.startRun(false, { opaque, section: choice });
+            this.startRun(false, { opaque, section: choice, video: videoOn });
           },
         }),
       ],
@@ -1855,11 +1876,28 @@ class DesignsPage {
    * opaque: what becomes of loose designs with nothing to see through ("as_is" | "place").
    * section: the start card's shop section ("template" | "none" | a section id).
    */
-  async startRun(dryRun, { opaque, section } = {}) {
+  videoPref() {
+    try {
+      return localStorage.getItem("etsyotomasyon.designs.video") === "1";
+    } catch {
+      return false;
+    }
+  }
+
+  saveVideoPref(on) {
+    try {
+      localStorage.setItem("etsyotomasyon.designs.video", on ? "1" : "0");
+    } catch {
+      /* only remembered */
+    }
+  }
+
+  async startRun(dryRun, { opaque, section, video } = {}) {
     this.starting = true;
     try {
       const body = { dry_run: !!dryRun };
       if (opaque === "place" || opaque === "as_is") body.opaque = opaque;
+      if (video === true) body.video = true;
       if (section === "template" || section === "none" || (Number.isInteger(section) && section > 0)) body.section = section;
       const job = await this.api.post("/api/designs/start", body);
       await this.showJob(job.id, job);

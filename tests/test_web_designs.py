@@ -1298,3 +1298,17 @@ def test_the_section_select_and_its_notes():
         [["hint", "ready.section_empty"]],
     ]
     assert got["values"] == ["template", "none", 9002]
+
+
+def test_the_start_card_says_whether_video_can_be_made_and_the_option_is_checked(web, fast_images,
+                                                                                 monkeypatch):
+    from etsyotomasyon.drop import video
+
+    _setup_shop(web)
+    _put(web, "retro-mountain-sunset.png", _png())
+    monkeypatch.setattr(video, "find_ffmpeg", lambda: None)
+    assert web.client.get("/api/designs/pending").json()["video"] == {"available": False}
+    monkeypatch.setattr(video, "find_ffmpeg", lambda: "ffmpeg")
+    assert web.client.get("/api/designs/pending").json()["video"] == {"available": True}
+    bad = web.client.post("/api/designs/start", json={"video": "yes"})
+    assert bad.status_code == 422 and bad.json()["error"]["code"] == "invalid"

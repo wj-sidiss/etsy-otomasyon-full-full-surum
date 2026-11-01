@@ -535,3 +535,34 @@ def test_a_file_upload_is_a_write_and_is_not_repeated_after_a_5xx(tmp_path, monk
     with pytest.raises(EtsyApiError):
         client.upload_listing_file(1000001, path)
     assert len(calls) == 1
+
+
+def test_upload_listing_video_posts_the_video_and_its_name(tmp_path):
+    handler, seen = recorder({f"/shops/{SHOP}/listings/1000001/videos": {
+        "video_id": 77, "height": 1080, "width": 1080, "thumbnail_url": "", "video_url": "",
+        "video_state": "active"}})
+    client = make_client(handler)
+    path = tmp_path / "1000001.mp4"
+    path.write_bytes(b"\x00\x00\x00\x18ftypmp42 video")
+    answer = client.upload_listing_video(1000001, path)
+    assert answer["video_id"] == 77
+    (request,) = seen
+    assert request.method == "POST"
+    assert request.url.path == f"{PREFIX}/shops/{SHOP}/listings/1000001/videos"
+    parts = _parts(request)
+    assert set(parts) == {"video", "name"}
+    assert parts["video"][0] == "1000001.mp4" and parts["video"][2] == "video/mp4"
+    assert parts["name"][1] == b"1000001.mp4"
+
+
+def test_a_listing_video_is_checked_before_it_is_sent(tmp_path):
+    handler, seen = recorder({})
+    client = make_client(handler)
+    wrong = tmp_path / "clip.avi"
+    wrong.write_bytes(b"x")
+    empty = tmp_path / "empty.mp4"
+    empty.write_bytes(b"")
+    for path in (wrong, empty, tmp_path / "missing.mp4"):
+        with pytest.raises(ValidationError):
+            client.upload_listing_video(1000001, path)
+    assert seen == []

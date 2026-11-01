@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **A video for every listing.** The *Başlat* window of **Tasarım Yükle** has an **Add a
+  video** option (remembered): after each draft is made, a silent 12-second square video
+  of its own photos (each slowly zooming into the next) is made and attached to it. Etsy
+  takes one video per listing, 5 to 15 seconds, MP4 or MOV, up to 100 MB, and most sellers
+  have none. The video is made with ffmpeg, a free program you install once; the option is
+  greyed out with the reason when it is not found (`ETSYOTOMASYON_FFMPEG` names it when it is in
+  an unusual place). A video that cannot be made or attached is a warning on the draft;
+  the draft stays (`drop/video.py`, `uploadListingVideo`, `"video": true` in
+  `POST /api/designs/start`).
+
 ## [0.4.0] — 2026-10-27
 
 ### Added

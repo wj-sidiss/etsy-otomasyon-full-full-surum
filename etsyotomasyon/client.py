@@ -625,6 +625,33 @@ class EtsyClient:
             files={**files, **{k: (None, v) for k, v in data.items()}},
         )
 
+    def upload_listing_video(self, listing_id: int, path: Path, *, name: str | None = None
+                             ) -> dict[str, Any]:
+        """uploadListingVideo (listings_w): attach the listing's one video.
+
+        POST /shops/{shop_id}/listings/{listing_id}/videos, multipart/form-data with
+        `video` (the file) and `name`. Etsy takes MP4 or MOV of 5 to 15 seconds and up to
+        100 MB; a listing holds one. Checked before it is read, like an image.
+        """
+        if path.suffix.lower() not in (".mp4", ".mov"):
+            raise ValidationError(f"{path.name}: Etsy accepts MP4 or MOV listing videos")
+        try:
+            size = path.stat().st_size
+        except OSError as exc:
+            raise ValidationError(f"{path.name}: cannot be read ({exc})") from exc
+        if size == 0 or size > MAX_VIDEO_BYTES:
+            raise ValidationError(f"{path.name}: a listing video is up to "
+                                  f"{MAX_VIDEO_BYTES // 1024 // 1024} MB")
+        filename = (name or path.name).strip() or path.name
+        with path.open("rb") as handle:
+            data = handle.read()
+        return self.request(
+            "POST",
+            f"/shops/{self.shop_id()}/listings/{listing_id}/videos",
+            files={"video": (filename, data, _file_mime(path)),
+                   "name": (None, filename)},
+        )
+
     def upload_listing_file(
         self, listing_id: int, path: Path, *, rank: int = 1, name: str | None = None
     ) -> dict[str, Any]:
@@ -815,6 +842,7 @@ _MIME = {
 # The same fact as a suffix set, for callers deciding about a file before a listing
 # exists. `drop.workspace.IMAGE_SUFFIXES` is the wider *input* set and is not this.
 UPLOADABLE_SUFFIXES = frozenset(_MIME)
+MAX_VIDEO_BYTES = 100 * 1024 * 1024
 
 # Etsy refuses a listing image over 20MB.
 MAX_IMAGE_BYTES = 20 * 1024 * 1024

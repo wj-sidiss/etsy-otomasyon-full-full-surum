@@ -655,6 +655,7 @@ def used_mockups(ws: Any, listing_type: str | None,
 def _pending_info(ctx: AppContext) -> dict[str, Any]:
     from ...config import MAX_LISTING_IMAGES
     from ...drop import automation, catalog, infoimages, pipeline, seeds
+    from ...drop import video as video_mod
     from ...drop import watermark as watermark_mod
 
     if not ctx.wait_first_status(0):
@@ -867,6 +868,8 @@ def _pending_info(ctx: AppContext) -> dict[str, Any]:
         "opaque": {"flat": grounds.get("flat", 0), "photo": grounds.get("photo", 0),
                    "unknown": grounds.get("unknown", 0)},
         "watermark": mark,
+        # A short video of each draft's pictures (drop.video): offered when ffmpeg is there.
+        "video": {"available": video_mod.available()},
         "template": template,
         "shop": {"connected": state == "connected", "name": shop.get("name"),
                  "state": state},
@@ -1354,12 +1357,15 @@ def start(req: Request) -> dict[str, Any]:
     if opaque not in stream.OPAQUE_CHOICES:
         raise ApiError(422, "invalid", "opaque must be as_is or place", field="opaque")
     section = _section_choice(body["section"]) if body.get("section") is not None else None
+    make_video = body.get("video", False)
+    if not isinstance(make_video, bool):
+        raise ApiError(422, "invalid", "video must be true or false", field="video")
     with _start_lock:
-        return _start(ctx, dry_run, opaque, section)
+        return _start(ctx, dry_run, opaque, section, make_video)
 
 
 def _start(ctx: AppContext, dry_run: bool, opaque: str = "as_is",
-           section: str | int | None = None) -> dict[str, Any]:
+           section: str | int | None = None, make_video: bool = False) -> dict[str, Any]:
     from ...drop import automation, stream
     from ...drop.template import Template
 
@@ -1402,6 +1408,7 @@ def _start(ctx: AppContext, dry_run: bool, opaque: str = "as_is",
                     ws, template, client, mockups=mockup_paths,
                     on_event=tracker.on_event, cancel=_JobCancel(job),
                     concurrency=CONCURRENCY, dry_run=dry_run, opaque=opaque,
+                    video=make_video and not dry_run,
                 )
             except automation.UploadLocked as exc:
                 raise ApiError(409, "locked", str(exc)) from exc
