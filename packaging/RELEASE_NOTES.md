@@ -1,3 +1,15 @@
+**0.5.0 adds a video to every listing.** In the **Başlat** window of **Tasarım Yükle**, turn on
+**Add a video**: after each draft is made, a 12-second product video of its own photos is made
+and attached to the listing. Etsy takes one video per listing and most sellers have none. It
+is made with ffmpeg (free, install it once from ffmpeg.org); without it the option says so and
+nothing else changes.
+
+**0.5.0 her ilana video ekler.** **Tasarım Yükle**'nin **Başlat** penceresinde **Video ekle**'yi
+açın: her taslak oluştuktan sonra kendi fotoğraflarından 12 saniyelik bir ürün videosu yapılıp
+ilana eklenir. Etsy ilan başına bir video alır ve çoğu satıcıda yoktur. Video ffmpeg ile
+hazırlanır (ücretsiz, ffmpeg.org'dan bir kez kurun); kurulu değilse seçenek bunu söyler, başka
+hiçbir şey değişmez.
+
 **0.4.0 takes you from the sale to the printer.** When an order comes in, the app makes its
 **print-ready files** and an **invoice sheet** with the product's picture, in one click and
 without you opening anything: the pattern repeats exactly across the roll's width, a tile
