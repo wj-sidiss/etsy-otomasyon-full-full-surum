@@ -1,3 +1,11 @@
+**0.5.1 fixes the competitor research error.** If the SEO page said "Search failed: Etsy
+returned an error (400)", the search is now asked again in plainer forms and works. When Etsy
+still refuses, the message now says what Etsy said.
+
+**0.5.1 rakip araştırması hatasını düzeltir.** SEO sayfası "Arama yapılamadı: Etsy bir hata
+döndürdü (400)" diyorsa, arama artık daha sade biçimlerde yeniden isteniyor ve çalışıyor. Etsy
+yine de reddederse mesaj artık Etsy'nin ne dediğini de yazıyor.
+
 **0.5.0 adds a video to every listing.** In the **Başlat** window of **Tasarım Yükle**, turn on
 **Add a video**: after each draft is made, a 12-second product video of its own photos is made
 and attached to the listing. Etsy takes one video per listing and most sellers have none. It

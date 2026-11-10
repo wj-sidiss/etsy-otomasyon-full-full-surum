@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] — 2026-11-10
+
+### Fixed
+- **"Arama yapılamadı: Etsy bir hata döndürdü (400)"** on the SEO page's competitor research
+  (and in the **Düzelt** window, which reads the same search). For some Etsy keys the ranked,
+  sorted search is refused with a 400. The search is now asked again without the sort, and then
+  in pages of 25, before it gives up; and when it does, the message carries Etsy's own words,
+  not only the number, so the cause can be told. The same goes for every other Etsy error shown
+  in the app.
+
 ## [0.5.0] — 2026-11-02
 
 ### Added
@@ -671,7 +681,8 @@ Recorded here and in the code so nobody has to re-derive them:
 - There is no idempotency key, so non-idempotent writes are never retried on a timeout
   or a 5xx — a repeat would mean a duplicate listing, or a second email to a buyer.
 
-[Unreleased]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.3.3...v0.4.0
 [0.3.3]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.3.2...v0.3.3

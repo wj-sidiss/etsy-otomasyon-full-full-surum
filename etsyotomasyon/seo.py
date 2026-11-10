@@ -28,6 +28,7 @@ from typing import Any
 from . import vocab
 from .client import EtsyClient
 from .config import MAX_TAG_LEN, MAX_TAGS, MAX_TITLE_LEN
+from .errors import EtsyApiError
 
 # Etsy truncates titles in search results and on mobile cards around here, so the
 # keyword a buyer scans for should land inside this window.
@@ -705,6 +706,33 @@ def _top_phrases(counter: Counter[str], sampled: int) -> list[tuple[str, int]]:
     return sorted(singles + longer, key=_by_count)
 
 
+def _search(client: EtsyClient, keyword: str, sample: int, sort_on: str,
+            filters: dict[str, Any]) -> list[dict[str, Any]]:
+    """The marketplace search, asked the plain way when Etsy refuses the usual one.
+
+    Some keys get a 400 for the ranked, sorted request (`sort_on`, `sort_order`, 100 a
+    page). It is then asked again without the sort, and then in pages of 25: the sample
+    is a little less exact, but the research works. Any other error, and a 400 that every
+    form gets, is raised as it came.
+    """
+    forms: list[dict[str, Any]] = [
+        {"sort_on": sort_on, "sort_order": "desc"},
+        {},
+        {"page_size": 25},
+    ]
+    refused: EtsyApiError | None = None
+    for form in forms:
+        try:
+            return list(client.search_active_listings(
+                keywords=keyword, max_items=sample, **form, **filters))
+        except EtsyApiError as exc:
+            if exc.status != 400:
+                raise
+            refused = exc
+    assert refused is not None
+    raise refused
+
+
 def research(
     client: EtsyClient,
     keyword: str,
@@ -718,11 +746,7 @@ def research(
     Tags and phrases are counted per listing and ordered by count, then alphabetically,
     so the same sample always gives the same report.
     """
-    listings = list(
-        client.search_active_listings(
-            keywords=keyword, max_items=sample, sort_on=sort_on, sort_order="desc", **filters
-        )
-    )
+    listings = _search(client, keyword, sample, sort_on, filters)
 
     tag_counter: Counter[str] = Counter()
     phrase_counter: Counter[str] = Counter()

@@ -725,3 +725,35 @@ def test_every_issue_the_audit_can_raise_has_a_sentence_in_both_languages():
     for lang in ("tr", "en"):
         for key in ("issue.tags.shared", "issue.tags.generic"):
             assert "{other}" in strings[lang][key] or "{generic}" in strings[lang][key]
+
+
+def _refusing_search(refuse_when):
+    """A search route that answers 400 to the requests `refuse_when(params)` picks."""
+    plain = _search_route(_search_results(40))
+
+    def respond(request: httpx.Request):
+        if refuse_when(dict(request.url.params)):
+            return httpx.Response(400, json={"error": "Bad request"})
+        return plain(request)
+
+    return respond
+
+
+def test_research_asks_again_the_plain_way_when_etsy_refuses_the_sorted_search(web):
+    fake = _connected(web)
+    fake.add("GET", "/listings/active", _refusing_search(lambda q: "sort_on" in q))
+    data = web.client.get("/api/seo/research", params={"keyword": "teacher"}).json()
+    assert data["sampled"] == 40 and data["tags"]
+    queries = [dict(r.url.params) for r in fake.requests if r.url.path.endswith("/listings/active")]
+    assert "sort_on" in queries[0] and all("sort_on" not in q for q in queries[1:])
+
+
+def test_research_tries_pages_of_25_before_giving_up_and_then_says_what_etsy_said(web):
+    fake = _connected(web)
+    fake.add("GET", "/listings/active", _refusing_search(lambda q: q.get("limit") == "100"))
+    data = web.client.get("/api/seo/research", params={"keyword": "teacher"}).json()
+    assert data["sampled"] == 40
+    web2 = _refusing_search(lambda q: True)
+    fake.add("GET", "/listings/active", web2)
+    resp = web.client.get("/api/seo/research", params={"keyword": "teacher", "refresh": "1"})
+    assert resp.status_code == 502 and resp.json()["error"]["code"] == "etsy_error"

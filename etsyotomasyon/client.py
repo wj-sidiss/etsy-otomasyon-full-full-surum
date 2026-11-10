@@ -784,13 +784,14 @@ class EtsyClient:
         ))
 
     def search_active_listings(
-        self, *, keywords: str, max_items: int = 100, **filters: Any
+        self, *, keywords: str, max_items: int = 100, page_size: int = MAX_PAGE_LIMIT,
+        **filters: Any
     ) -> Iterator[dict[str, Any]]:
         """Public marketplace search. Needs the API key but no OAuth token."""
         params = {"keywords": keywords, **filters}
         for listing in self.paginate(
             "/listings/active", params=params, max_items=max_items, authed=False,
-            max_offset=MAX_SEARCH_OFFSET,
+            page_size=page_size, max_offset=MAX_SEARCH_OFFSET,
         ):
             yield unescape_listing(listing)
 
