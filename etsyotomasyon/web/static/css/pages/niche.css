@@ -1,0 +1,139 @@
+.page-niche {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+.page-niche .nf-bar {
+  display: flex;
+  gap: 10px;
+}
+.page-niche .nf-input {
+  flex: 1;
+}
+.page-niche .nf-recent {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.page-niche .nf-chip {
+  padding: 4px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+.page-niche .nf-chip:hover {
+  color: var(--text);
+}
+.page-niche .nf-body {
+  display: grid;
+  gap: 14px;
+}
+.page-niche .nf-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.page-niche .nf-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.page-niche .nf-metric {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--panel-3);
+}
+.page-niche .nf-metric-label {
+  color: var(--muted);
+  font-size: 12px;
+}
+.page-niche .nf-metric-value {
+  font-size: 24px;
+}
+.page-niche .nf-metric-sub {
+  color: var(--muted);
+  font-size: 12px;
+}
+.page-niche .nf-metric.tone-success .nf-metric-value {
+  color: var(--success);
+}
+.page-niche .nf-metric.tone-warning .nf-metric-value {
+  color: var(--warning);
+}
+.page-niche .nf-metric.tone-danger .nf-metric-value {
+  color: #ef6a6a;
+}
+.page-niche .nf-formula,
+.page-niche .nf-sample {
+  margin: 0;
+  font-size: 12px;
+}
+.page-niche .nf-two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.page-niche .nf-list {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.page-niche .nf-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+.page-niche .nf-row:first-child {
+  border-top: 0;
+}
+.page-niche .nf-row-main {
+  display: grid;
+  min-width: 0;
+}
+.page-niche .nf-row-sub {
+  font-size: 12px;
+}
+.page-niche .nf-row-num {
+  display: grid;
+  justify-items: end;
+  min-width: 62px;
+  font-size: 12px;
+}
+.page-niche .nf-row-num strong {
+  font-size: 14px;
+}
+.page-niche .nf-watch .nf-row {
+  grid-template-columns: minmax(0, 1fr) auto auto auto auto;
+}
+.page-niche .nf-spark {
+  color: var(--accent);
+}
+.page-niche .nf-delta {
+  color: var(--muted);
+}
+.page-niche .nf-delta.is-up {
+  color: var(--success);
+}
+.page-niche .nf-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+@media (max-width: 1100px) {
+  .page-niche .nf-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .page-niche .nf-two {
+    grid-template-columns: 1fr;
+  }
+}

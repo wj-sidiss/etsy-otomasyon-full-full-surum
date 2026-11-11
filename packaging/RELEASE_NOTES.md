@@ -1,3 +1,15 @@
+**0.6.0 adds the Niche Finder.** Type a keyword and see how much it gets and how crowded it
+is: demand, competition, the price band, the trending listings, the rising ones where a
+newcomer can get in, and the tags they share. Pick listings to watch and follow their
+favourites and views over time. Etsy does not publish sales; the numbers are what Etsy shows
+on every listing.
+
+**0.6.0 Niş Bulucu'yu ekler.** Bir kelime yazın, ne kadar talep gördüğünü ve ne kadar
+kalabalık olduğunu görün: talep, rekabet, fiyat aralığı, trend ilanlar, yeni birinin
+girebileceği yükselen ilanlar ve ortak etiketler. İlanları takip listesine ekleyip favori ve
+görüntülenmelerini zamanla izleyin. Etsy satış sayısını yayınlamaz; sayılar Etsy'nin her ilanda
+gösterdiği değerlerdir.
+
 **0.5.1 fixes the competitor research error.** If the SEO page said "Search failed: Etsy
 returned an error (400)", the search is now asked again in plainer forms and works. When Etsy
 still refuses, the message now says what Etsy said.

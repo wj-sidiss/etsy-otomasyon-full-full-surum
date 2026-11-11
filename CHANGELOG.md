@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] — 2026-11-11
+
+### Added
+- **Niş Bulucu (Niche Finder).** A new page: type a keyword and see how much it gets and how
+  crowded it is. Etsy does not publish sales, so the page reads what it does publish for
+  each of the 300 listings it ranks first (and the 100 newest): views, favourites and the
+  creation date. From them: demand (median views a day), competition (how many listings
+  Etsy finds, how much the three biggest shops hold, how many are new), the price band, the
+  **trending** listings (most views a day), the **rising** ones (under 120 days old and
+  already getting views: where a newcomer can get in), and the tags and title phrases they
+  share. The opportunity score is a plain formula shown with its two parts. A **watch list**
+  keeps the favourites and views of the listings you pick over time, with a small chart and
+  the change since you added them, on your computer only. Public search with the API key
+  alone; an analysis is kept for a day (`GET /api/niche`, `/api/niche/watch`).
+
 ## [0.5.1] — 2026-11-10
 
 ### Fixed
@@ -681,7 +696,8 @@ Recorded here and in the code so nobody has to re-derive them:
 - There is no idempotency key, so non-idempotent writes are never retried on a timeout
   or a 5xx — a repeat would mean a duplicate listing, or a second email to a buyer.
 
-[Unreleased]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.3.3...v0.4.0

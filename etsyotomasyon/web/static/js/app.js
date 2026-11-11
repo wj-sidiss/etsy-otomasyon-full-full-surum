@@ -40,6 +40,7 @@ export const ROUTES = [
   // one in the address bar once it knows the listing's state.
   { path: "/ilanlar/taslak/:id", page: "listing-detail", nav: "listings" },
   { path: "/seo", page: "seo" },
+  { path: "/nis-bulucu", page: "niche" },
   { path: "/siparisler", page: "orders" },
   { path: "/kar-zarar", page: "profit" },
   { path: "/pinterest", page: "pinterest" },
@@ -64,6 +65,7 @@ const NAV = [
       { page: "designs", path: "/tasarim-yukle", icon: "upload" },
       { page: "listings", path: "/ilanlar", icon: "list" },
       { page: "seo", path: "/seo", icon: "search" },
+      { page: "niche", path: "/nis-bulucu", icon: "target" },
       { page: "orders", path: "/siparisler", icon: "truck" },
       { page: "profit", path: "/kar-zarar", icon: "chart" },
       // Shown only while Pinterest is in use (session.pinterest) or its page is open;

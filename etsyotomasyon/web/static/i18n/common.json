@@ -190,7 +190,8 @@
     "errors.forbidden_host": "Bu adres etsyotomasyon tarafından sunulmuyor.",
     "errors.forbidden_origin": "Başka bir siteden gelen istekler reddedilir.",
     "errors.method_not_allowed": "Bu işlem burada desteklenmiyor.",
-    "errors.length_required": "Dosya boyutu bildirilmedi; tekrar deneyin."
+    "errors.length_required": "Dosya boyutu bildirilmedi; tekrar deneyin.",
+    "nav.niche": "Niş Bulucu"
   },
   "en": {
     "app.name": "etsyotomasyon",
@@ -383,6 +384,7 @@
     "errors.forbidden_host": "This address is not served by etsyotomasyon.",
     "errors.forbidden_origin": "Requests from other sites are refused.",
     "errors.method_not_allowed": "This action is not supported here.",
-    "errors.length_required": "The upload size was missing; try again."
+    "errors.length_required": "The upload size was missing; try again.",
+    "nav.niche": "Niche Finder"
   }
 }
