@@ -2571,3 +2571,15 @@
     margin-top: 0;
   }
 }
+
+.page-mockups .mk-cover-note {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.page-mockups .mk-cover-note.is-ok {
+  color: var(--success);
+}
+.page-mockups .mk-cover-note.is-warn {
+  color: var(--warning);
+}

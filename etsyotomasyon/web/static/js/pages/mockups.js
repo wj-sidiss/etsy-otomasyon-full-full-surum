@@ -1972,11 +1972,11 @@ async function mountEditor(el, ctx, name) {
   // `explicit` says which of them the seller set (the others follow the mockup type).
   let quad = null;
   let savedQuad = null;
-  let look = { realism: 0, curve: 0 };
-  let savedLook = { realism: 0, curve: 0 };
-  let explicit = { realism: false, curve: false };
-  let savedExplicit = { realism: false, curve: false };
-  let style = { realism_default: 0, curve_default: 0, curve_offered: false };
+  let look = { realism: 0, curve: 0, tile: 0 };
+  let savedLook = { realism: 0, curve: 0, tile: 0 };
+  let explicit = { realism: false, curve: false, tile: false };
+  let savedExplicit = { realism: false, curve: false, tile: false };
+  let style = { realism_default: 0, curve_default: 0, curve_offered: false, tile_default: 0, tile_offered: false };
   let previewSeq = 0;
   let saving = false;
   let chain = Promise.resolve();
@@ -1987,7 +1987,7 @@ async function mountEditor(el, ctx, name) {
   const schedulePreview = debounce(() => loadPreview(), 350);
 
   const isDirty = () =>
-    !!(saved && area && (!sameArea(saved, area) || !sameQuad(savedQuad, quad) || look.realism !== savedLook.realism || look.curve !== savedLook.curve));
+    !!(saved && area && (!sameArea(saved, area) || !sameQuad(savedQuad, quad) || look.realism !== savedLook.realism || look.curve !== savedLook.curve || look.tile !== savedLook.tile));
   const W = () => (item && item.width) || 1;
   const H = () => (item && item.height) || 1;
 
@@ -2096,7 +2096,9 @@ async function mountEditor(el, ctx, name) {
   quadNote.hidden = true;
   const realismCtl = lookSlider("realism", t("editor.realism"), t("editor.realism_hint"));
   const curveCtl = lookSlider("curve", t("editor.curve"), t("editor.curve_hint"));
-  const lookBox = h("div", { class: "mk-look-box" }, realismCtl.el, curveCtl.el);
+  const tileCtl = lookSlider("tile", t("editor.tile"), t("editor.tile_hint"));
+  const coverNote = h("p", { class: "mk-cover-note", hidden: true });
+  const lookBox = h("div", { class: "mk-look-box" }, realismCtl.el, curveCtl.el, tileCtl.el, coverNote);
   const designThumb = h("span", { class: "mk-design-thumb checker" });
   const designName = h("span", { class: "mk-design-name ellipsis" });
   const designRow = h(
@@ -2479,10 +2481,12 @@ async function mountEditor(el, ctx, name) {
       realism_default: st.realism_default || 0,
       curve_default: st.curve_default || 0,
       curve_offered: !!st.curve_offered,
+      tile_default: st.tile_default || 0,
+      tile_offered: !!st.tile_offered,
     };
     const a = stored || {};
-    savedLook = { realism: st.realism ?? 0, curve: st.curve ?? 0 };
-    savedExplicit = { realism: a.realism !== undefined && a.realism !== null, curve: a.curve !== undefined && a.curve !== null };
+    savedLook = { realism: st.realism ?? 0, curve: st.curve ?? 0, tile: st.tile ?? 0 };
+    savedExplicit = { realism: a.realism !== undefined && a.realism !== null, curve: a.curve !== undefined && a.curve !== null, tile: a.tile !== undefined && a.tile !== null };
     look = { ...savedLook };
     explicit = { ...savedExplicit };
   }
@@ -2627,16 +2631,17 @@ async function mountEditor(el, ctx, name) {
   }
 
   function renderLook() {
-    for (const ctl of [realismCtl, curveCtl]) {
+    for (const ctl of [realismCtl, curveCtl, tileCtl]) {
       ctl.input.value = String(look[ctl.key]);
       ctl.paint();
     }
     curveCtl.el.hidden = !(style.curve_offered || look.curve > 0);
+    tileCtl.el.hidden = !(style.tile_offered || look.tile > 0);
   }
 
   /** What the screen shows, rounded as it is saved: a stale preview is recognised by it. */
   function stateKey() {
-    return JSON.stringify([roundArea(area), roundQuad(quad), look.realism, look.curve]);
+    return JSON.stringify([roundArea(area), roundQuad(quad), look.realism, look.curve, look.tile]);
   }
 
   function setArea(next) {
@@ -2952,9 +2957,28 @@ async function mountEditor(el, ctx, name) {
       previewImg.replaceWith(img);
       previewImg = img;
       art.classList.add("has-preview");
+      checkCover(seq, key, where);
     };
     const where = q ? { quad: q.flat().join(",") } : { x: a.x, y: a.y, w: a.w, h: a.h };
-    img.src = ctx.api.url(`/api/mockups/${enc(name)}/preview`, { design: design.id, ...where, realism: look.realism, curve: look.curve, max: IMAGE_MAX });
+    img.src = ctx.api.url(`/api/mockups/${enc(name)}/preview`, { design: design.id, ...where, realism: look.realism, curve: look.curve, tile: look.tile, max: IMAGE_MAX });
+  }
+
+  /** A wallpaper scene is judged as a cover: the wall's share and the pattern in a thumbnail. */
+  async function checkCover(seq, key, where) {
+    if (!look.tile) {
+      coverNote.hidden = true;
+      return;
+    }
+    try {
+      const res = await ctx.api.get(`/api/mockups/${enc(name)}/cover-check`, { design: design.id, ...where, realism: look.realism, curve: look.curve, tile: look.tile, max: IMAGE_MAX }, { signal: ctx.signal });
+      if (seq !== previewSeq || key !== stateKey()) return;
+      const problems = (res.problems || []).map((p) => t(`editor.cover_${p}`, { share: Math.round((res.wall_share || 0) * 100) }));
+      coverNote.hidden = !res.applies;
+      coverNote.className = `mk-cover-note ${problems.length ? "is-warn" : "is-ok"}`;
+      coverNote.textContent = problems.length ? problems.join(" ") : t("editor.cover_ok", { share: Math.round((res.wall_share || 0) * 100) });
+    } catch {
+      coverNote.hidden = true;
+    }
   }
 
   async function pickDesign() {
@@ -3012,6 +3036,7 @@ async function mountEditor(el, ctx, name) {
         ...where,
         realism: explicit.realism ? look.realism : null,
         curve: explicit.curve ? look.curve : null,
+        tile: explicit.tile ? look.tile : null,
         same_size: !!(sameSize && siblings.length),
       };
       const sent = stateKey();
@@ -3143,7 +3168,7 @@ async function mountEditor(el, ctx, name) {
       const fresh = await ctx.api.get(`/api/mockups/${enc(name)}/area`, null, { signal: ctx.signal });
       const keep = { look: { ...look }, explicit: { ...explicit } };
       takeStyle(fresh, { stored: fresh.area });
-      for (const key of ["realism", "curve"]) {
+      for (const key of ["realism", "curve", "tile"]) {
         if (keep.explicit[key]) {
           look[key] = keep.look[key];
           explicit[key] = true;

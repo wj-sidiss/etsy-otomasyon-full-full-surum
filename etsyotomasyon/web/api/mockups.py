@@ -63,6 +63,7 @@ def register(r: Router, ctx: AppContext) -> None:
     r.delete("/api/mockups/{name}/area", clear_area)
     r.get("/api/mockups/{name}/image", mockup_image)
     r.get("/api/mockups/{name}/preview", mockup_preview)
+    r.get("/api/mockups/{name}/cover-check", cover_check)
 
 
 # --- helpers -----------------------------------------------------------------------------
@@ -486,6 +487,9 @@ def _area_payload(ws: Workspace, name: str) -> dict[str, Any]:
             "realism_default": mockup.REALISM_DEFAULTS.get(kind, 0),
             "curve_default": mockup.CURVE_DEFAULTS.get(kind, 0),
             "curve_offered": kind in mockup.CURVE_TYPES or bool(used.curve),
+            "tile": used.tile,
+            "tile_default": mockup.TILE_DEFAULTS.get(kind, 0),
+            "tile_offered": kind == "other" or bool(used.tile),
         },
     }
 
@@ -552,10 +556,14 @@ def _area(values: Any, *, style_from: mockup.PrintArea | None = None) -> mockup.
         curve = _level(values.get("curve"), "curve")
     else:
         curve = style_from.curve if style_from is not None else None
+    if "tile" in values:
+        tile = _level(values.get("tile"), "tile")
+    else:
+        tile = style_from.tile if style_from is not None else None
     if values.get("quad") not in (None, ""):
         corners = [[round(v, 5) for v in point] for point in _quad(values.get("quad"))]
         try:
-            return mockup.PrintArea.from_quad(corners, realism=realism, curve=curve)
+            return mockup.PrintArea.from_quad(corners, realism=realism, curve=curve, tile=tile)
         except ValidationError as exc:
             raise ApiError(422, "bad_area", str(exc)) from exc
     x, y, w, h = (_number(values.get(k), k) for k in ("x", "y", "w", "h"))
@@ -566,7 +574,7 @@ def _area(values: Any, *, style_from: mockup.PrintArea | None = None) -> mockup.
     if 1.0 < y + h <= 1.0001:
         h = round(1.0 - y, 5)
     try:
-        return mockup.PrintArea(x, y, w, h, realism=realism, curve=curve)
+        return mockup.PrintArea(x, y, w, h, realism=realism, curve=curve, tile=tile)
     except ValidationError as exc:
         raise ApiError(422, "bad_area", str(exc)) from exc
 
@@ -638,22 +646,15 @@ def design_image(req: Request) -> Response:
     return Response.file(design_png(source, max_edge), "image/png", _cache_headers(req))
 
 
-def mockup_preview(req: Request) -> Response:
-    """GET /api/mockups/{name}/preview?design=&x=&y=&w=&h=&max=: a real composite.
-
-    `quad=` (eight numbers: four x,y corners) in place of x/y/w/h gives four corners;
-    `realism=` and `curve=` (0-100) override the saved ones. `mockup.compose` places
-    the design exactly as the drafts do (ratio kept, centred, the mockup type's
-    realism and curve). Both inputs are the cached screen-sized copies, so a preview
-    takes a fraction of a full-resolution render.
-    """
+def _rendered(req: Request) -> tuple[bytes, Any, str | None]:
+    """The preview's picture (JPEG bytes) with the area it was made for and the mockup's type."""
     ws = _ws(req)
     name = req.params["name"]
     path = _mockup_file(ws, name)
     saved = catalog.effective_area(ws, name)[0]
     if any(k in req.query for k in ("x", "y", "w", "h", "quad")):
         area = _area(req.query, style_from=saved)
-    elif any(k in req.query for k in ("realism", "curve")):
+    elif any(k in req.query for k in ("realism", "curve", "tile")):
         area = _area({**saved.to_dict(), **dict(req.query)}, style_from=saved)
     else:
         area = saved
@@ -671,6 +672,41 @@ def mockup_preview(req: Request) -> Response:
             out.unlink()
         except OSError:
             pass
+    return data, area, kind
+
+
+def cover_check(req: Request) -> dict[str, Any]:
+    """GET /api/mockups/{name}/cover-check?...: whether this scene works as a cover.
+
+    Takes the preview's parameters. The wall's share of the picture, and whether the pattern
+    still shows at the size Etsy shows a search result (drop.wall.check). Only a wallpaper
+    scene (a `tile`) is judged; anything else answers ``{"applies": false}``.
+    """
+    import io
+
+    from PIL import Image
+
+    from ...drop import wall
+
+    data, area, kind = _rendered(req)
+    used = mockup.styled(area, kind)
+    if not used.tile:
+        return {"applies": False}
+    with Image.open(io.BytesIO(data)) as cover:
+        cover.load()
+        return {"applies": True, **wall.check(cover, used.corners(*cover.size))}
+
+
+def mockup_preview(req: Request) -> Response:
+    """GET /api/mockups/{name}/preview?design=&x=&y=&w=&h=&max=: a real composite.
+
+    `quad=` (eight numbers: four x,y corners) in place of x/y/w/h gives four corners;
+    `realism=` and `curve=` (0-100) override the saved ones. `mockup.compose` places
+    the design exactly as the drafts do (ratio kept, centred, the mockup type's
+    realism and curve). Both inputs are the cached screen-sized copies, so a preview
+    takes a fraction of a full-resolution render.
+    """
+    data, _area, _kind = _rendered(req)
     return Response.bytes(data, "image/jpeg", {"Cache-Control": "no-store"})
 
 

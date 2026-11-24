@@ -599,7 +599,7 @@ def save_area(
         for target in targets:
             old = positions.get(target)
             if keep_style and old is not None:
-                positions[target] = replace(area, realism=old.realism, curve=old.curve)
+                positions[target] = replace(area, realism=old.realism, curve=old.curve, tile=old.tile)
             elif target != name and old is not None:
                 # A realism or curve left on the default (None) is not a setting, so a
                 # sibling keeps its own instead of being reset to its type's default.
@@ -607,6 +607,7 @@ def save_area(
                     area,
                     realism=old.realism if area.realism is None else area.realism,
                     curve=old.curve if area.curve is None else area.curve,
+                    tile=old.tile if area.tile is None else area.tile,
                 )
             else:
                 positions[target] = area

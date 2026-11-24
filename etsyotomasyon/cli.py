@@ -1662,7 +1662,7 @@ def drop_calibrate(
             old = positions.get(target.name)
             positions[target.name] = (
                 mockup_mod.PrintArea(new_area.x, new_area.y, new_area.w, new_area.h,
-                                     realism=old.realism, curve=old.curve)
+                                     realism=old.realism, curve=old.curve, tile=old.tile)
                 if old is not None else new_area
             )
         changed = targets

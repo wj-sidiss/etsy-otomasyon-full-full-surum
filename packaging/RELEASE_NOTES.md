@@ -1,3 +1,15 @@
+**0.7.0 makes wallpaper covers that sell.** In **Mockuplar**, the new **Pattern repeat**
+slider turns a room photo into a wallpaper scene: the pattern repeats across the whole wall,
+the light is adjusted to the pattern (soft and warm for dark ones, crisp for light ones), and
+one repeat is framed so buyers see how it tiles. A cover check tells you whether the wall is big
+enough and the pattern still reads in a small search thumbnail.
+
+**0.7.0 satan duvar kâğıdı kapakları yapar.** **Mockuplar**'daki yeni **Desen tekrarı**
+kaydırıcısı bir oda fotoğrafını duvar kâğıdı sahnesine çevirir: desen duvarın tamamında tekrar
+eder, ışık desene göre ayarlanır (koyularda yumuşak ve sıcak, açıklarda net) ve alıcı nasıl
+döşendiğini görsün diye bir tekrar çerçevelenir. Kapak kontrolü duvarın yeterince büyük olup
+olmadığını ve desenin küçük arama görselinde seçilip seçilmediğini söyler.
+
 **0.6.0 adds the Niche Finder.** Type a keyword and see how much it gets and how crowded it
 is: demand, competition, the price band, the trending listings, the rising ones where a
 newcomer can get in, and the tags they share. Pick listings to watch and follow their

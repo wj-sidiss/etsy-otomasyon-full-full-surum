@@ -23,7 +23,7 @@ except ImportError:  # pragma: no cover - a source build without lcms2
 
 from ..client import UPLOADABLE_SUFFIXES
 from ..errors import ValidationError
-from . import surface
+from . import surface, wall
 
 # A chest print on a folded garment shot, as fractions of the mockup. Deliberately
 # conservative: too small reads as a design choice, too large reads as a bug.
@@ -75,6 +75,9 @@ CURVE_DEFAULTS = {"mug": 55}
 # The types the editor offers the curve for: a mug, or a tumbler or bottle filed as "other".
 CURVE_TYPES = frozenset({"mug", "other"})
 # Rigid surfaces have no folds, so the design is never displaced along them.
+# The pattern's repeats across a wall (drop.wall.repeats): a mockup type has no default,
+# a wallpaper scene is an area with its own `tile`.
+TILE_DEFAULTS: dict[str, int] = {}
 RIGID_TYPES = frozenset({"mug", "poster", "canvas", "phone_case", "sticker"})
 
 
@@ -96,6 +99,7 @@ class PrintArea:
     quad: tuple[tuple[float, float], ...] | None = None
     realism: int | None = None
     curve: int | None = None
+    tile: int | None = None
 
     def __post_init__(self) -> None:
         if self.quad is not None:
@@ -115,7 +119,7 @@ class PrintArea:
             raise ValidationError("print area extends past the edge of the mockup")
         if self.w <= 0 or self.h <= 0:
             raise ValidationError("print area has no size")
-        for name in ("realism", "curve"):
+        for name in ("realism", "curve", "tile"):
             value = getattr(self, name)
             if value is None:
                 continue
@@ -127,8 +131,8 @@ class PrintArea:
 
     @classmethod
     def from_quad(cls, corners: Any, *, realism: int | None = None,
-                  curve: int | None = None) -> PrintArea:
-        return cls(0.0, 0.0, 0.0, 0.0, quad=corners, realism=realism, curve=curve)
+                  curve: int | None = None, tile: int | None = None) -> PrintArea:
+        return cls(0.0, 0.0, 0.0, 0.0, quad=corners, realism=realism, curve=curve, tile=tile)
 
     def pixels(self, width: int, height: int) -> tuple[int, int, int, int]:
         return (
@@ -162,6 +166,8 @@ class PrintArea:
             out["realism"] = self.realism
         if self.curve is not None:
             out["curve"] = self.curve
+        if self.tile is not None:
+            out["tile"] = self.tile
         return out
 
 
@@ -197,7 +203,10 @@ def styled(area: PrintArea, kind: str | None) -> PrintArea:
     curve = area.curve
     if curve is None:
         curve = CURVE_DEFAULTS.get(kind, 0) if kind else 0
-    return replace(area, realism=realism, curve=curve)
+    tile = area.tile
+    if tile is None:
+        tile = TILE_DEFAULTS.get(kind, 0) if kind else 0
+    return replace(area, realism=realism, curve=curve, tile=tile)
 
 
 DEFAULT_PRINT_AREA = PrintArea(*DEFAULT_AREA)
@@ -244,14 +253,16 @@ def load_positions(path: Path) -> dict[str, PrintArea]:
         try:
             box = (float(value["x"]), float(value["y"]), float(value["w"]), float(value["h"]))
             realism, curve = _level(value.get("realism")), _level(value.get("curve"))
+            tile = _level(value.get("tile"))
             try:
-                out[name] = PrintArea(*box, quad=value.get("quad"), realism=realism, curve=curve)
+                out[name] = PrintArea(*box, quad=value.get("quad"), realism=realism, curve=curve,
+                                      tile=tile)
             except ValidationError:
                 if value.get("quad") is None:
                     raise
                 # Corners a hand edit (or a later, stricter rule) broke: the rectangle
                 # they were saved with still says where the print goes.
-                out[name] = PrintArea(*box, realism=realism, curve=curve)
+                out[name] = PrintArea(*box, realism=realism, curve=curve, tile=tile)
         except (KeyError, TypeError, ValueError) as exc:
             raise ValidationError(f"{path}: entry {name!r} is malformed ({exc})") from exc
     return out
@@ -541,7 +552,20 @@ def compose(
             (round(mockup.width * factor), round(mockup.height * factor)), Image.LANCZOS
         )
 
-    place(mockup, design, area, kind=kind)
+    used = styled(area, kind)
+    if used.tile:
+        # A wallpaper scene (drop.wall): the pattern repeated across the wall, lit to suit
+        # it, with a frame round one repeat.
+        corners = used.corners(*mockup.size)
+        wall_w, wall_h = surface.quad_size(corners)
+        aspect = wall_w / max(wall_h, 1.0)
+        room = mockup.copy()  # the photo's own light, before the pattern covers it
+        place(mockup, wall.tiled(design, used.tile, aspect), area, kind=kind)
+        wall.light(mockup, corners, wall.luminance(design))
+        wall.daylight(mockup, corners, room)
+        wall.mark(mockup, corners, used.tile, design.size, aspect)
+    else:
+        place(mockup, design, area, kind=kind)
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     mockup.save(out_path, "JPEG", **JPEG_OPTIONS)

@@ -274,7 +274,12 @@
     "errors.watermark_blank": "Görselde görünen bir şey yok; tamamen şeffaf.",
     "errors.watermark_missing": "Önce bir filigran görseli ekleyin.",
     "errors.watermark_no_ground": "Filigranın kaldırılacak düz renk bir arka planı yok.",
-    "errors.watermark_unreadable": "Filigran dosyası okunamıyor. Yeniden yükleyin ya da kaldırın."
+    "errors.watermark_unreadable": "Filigran dosyası okunamıyor. Yeniden yükleyin ya da kaldırın.",
+    "editor.tile": "Desen tekrarı (duvar kâğıdı)",
+    "editor.tile_hint": "Tasarım duvara tek parça yapıştırılmaz: duvar boyunca tekrar eder, ışığı desene göre ayarlanır ve bir tekrarın çevresine kesik çizgili çerçeve çizilir. 0: kapalı; büyüdükçe desen sıklaşır.",
+    "editor.cover_ok": "Kapak olarak uygun: duvar görselin %{share}'ini kaplıyor, desen küçük görselde de seçiliyor.",
+    "editor.cover_small_wall": "Duvar görselin yalnızca %{share}'ini kaplıyor: kapakta duvarı büyütün, desen kaybolmasın.",
+    "editor.cover_flat_pattern": "Desen küçük görselde seçilmiyor (çok sönük ya da sade): Etsy aramasında kapak küçük görünür."
   },
   "en": {
     "title": "Mockups",
@@ -551,6 +556,11 @@
     "errors.watermark_blank": "The picture has nothing visible in it; it is fully transparent.",
     "errors.watermark_missing": "Add a watermark picture first.",
     "errors.watermark_no_ground": "The watermark has no solid background to remove.",
-    "errors.watermark_unreadable": "The watermark file cannot be read. Upload it again or remove it."
+    "errors.watermark_unreadable": "The watermark file cannot be read. Upload it again or remove it.",
+    "editor.tile": "Pattern repeat (wallpaper)",
+    "editor.tile_hint": "The design is not pasted whole: it repeats across the wall, the light follows the pattern and one repeat is framed with a dashed line. 0: off; the higher, the more repeats.",
+    "editor.cover_ok": "Works as a cover: the wall takes {share}% of the picture and the pattern still shows in a small thumbnail.",
+    "editor.cover_small_wall": "The wall is only {share}% of the picture: make it bigger on a cover so the pattern does not get lost.",
+    "editor.cover_flat_pattern": "The pattern does not show in a small thumbnail (too faint or plain): Etsy shows covers small in search."
   }
 }

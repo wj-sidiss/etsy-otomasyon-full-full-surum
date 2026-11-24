@@ -593,7 +593,8 @@ def test_area_with_four_corners_and_a_realism_is_saved_for_the_same_size_ones(we
     assert "curve" not in body["area"]  # null: the type's default
     assert (body["area"]["x"], body["area"]["w"]) == (0.2, 0.6)
     assert body["style"] == {"kind": "tshirt", "realism": 30, "curve": 0, "realism_default": 65,
-                             "curve_default": 0, "curve_offered": False}
+                             "curve_default": 0, "curve_offered": False, "tile": 0,
+                             "tile_default": 0, "tile_offered": False}
     stored = mockup.load_positions(ws.positions_path)
     assert stored["b-tote-cream.png"].quad == tuple(tuple(p) for p in QUAD)
     assert stored["b-tote-cream.png"].realism == 30
@@ -643,3 +644,44 @@ def test_preview_draws_four_corners_with_the_settings_asked_for(web, ws):
         assert bad.status_code == 422, params
     # Only a realism: the saved (here: default) area with it.
     assert web.client.get("/api/mockups/mug.png/preview", params={"realism": 0}).status_code == 200
+
+
+# --- wallpaper scenes (drop.wall) ------------------------------------------------------------
+
+
+def test_a_tiled_area_repeats_the_pattern_and_a_plain_one_pastes_it_whole(web, ws):
+    put(ws, "room.png", png((400, 400), colour=(230, 225, 215)))
+    where = {"design": "sample", "x": 0.0, "y": 0.0, "w": 1.0, "h": 0.6, "max": 400}
+    plain = open_image(web.client.get("/api/mockups/room.png/preview", params=where).content).convert("RGB")
+    tiled = open_image(web.client.get("/api/mockups/room.png/preview",
+                                      params={**where, "tile": 60}).content).convert("RGB")
+    assert plain.size == tiled.size == (400, 400)
+    assert plain != tiled  # the wall is covered with repeats, not one design
+    # below the wall the room is untouched in both
+    assert tiled.getpixel((20, 380)) == pytest.approx((230, 225, 215), abs=4)
+
+
+def test_the_tile_setting_is_saved_offered_and_sent_back(web, ws):
+    put(ws, "room.png", png((400, 400)))
+    body = {"x": 0.0, "y": 0.0, "w": 1.0, "h": 0.6, "tile": 40}
+    assert web.client.post("/api/mockups/room.png/area", json=body).status_code == 200
+    saved = json.loads(ws.positions_path.read_text(encoding="utf-8"))["room.png"]
+    assert saved["tile"] == 40
+    style = web.client.get("/api/mockups/room.png/area").json()["style"]
+    assert style["tile"] == 40 and style["tile_default"] == 0 and style["tile_offered"] is True
+    assert web.client.post("/api/mockups/room.png/area",
+                           json={**body, "tile": 101}).status_code == 422
+    # a mockup without a tile writes none (an area saved before this stays as it was)
+    web.client.post("/api/mockups/room.png/area", json={"x": 0.0, "y": 0.0, "w": 1.0, "h": 0.6})
+    assert "tile" not in json.loads(ws.positions_path.read_text(encoding="utf-8"))["room.png"]
+
+
+def test_the_cover_check_judges_only_a_wallpaper_scene(web, ws):
+    put(ws, "room.png", png((400, 400), colour=(230, 225, 215)))
+    base = {"design": "sample", "x": 0.0, "y": 0.0, "w": 1.0, "h": 0.2, "max": 400}
+    assert web.client.get("/api/mockups/room.png/cover-check", params=base).json() == {"applies": False}
+    small = web.client.get("/api/mockups/room.png/cover-check", params={**base, "tile": 50}).json()
+    assert small["applies"] is True and "small_wall" in small["problems"] and small["ok"] is False
+    big = web.client.get("/api/mockups/room.png/cover-check",
+                         params={**base, "h": 0.8, "tile": 50}).json()
+    assert big["wall_share"] >= 0.75 and "small_wall" not in big["problems"]

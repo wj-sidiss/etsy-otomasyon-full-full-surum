@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] — 2026-11-25
+
+### Added
+- **Wallpaper scenes.** A wallpaper buyer buys how a room will look, not one motif, so a
+  cover with the design pasted whole on the wall hides what sells. The new **Desen tekrarı**
+  slider in **Mockuplar** (0 is off, the design pasted whole as before) makes the wall a
+  scene: the pattern is **repeated across the wall** (1 to 12 times, to the wall's own
+  proportions and perspective, so realism and the four corners work as usual), **lit to suit
+  it** (a dark pattern is warmed and lifted a little, a light one kept crisp; only on the
+  wall), and **one repeat is framed** with a dashed line and a small "Seamless repeat" label,
+  the way the best covers show it. It is offered for mockups of type "Ürün" (other); put the
+  four corners round the wall of a plain room photo and set the slider. **Daylight** comes
+  with it, automatically: soft warm window light on the wall from the side of the room that is
+  brighter in the photo, fading to the far side, so the pattern does not look pasted flat. Under the preview a
+  **cover check** says whether the picture works as a cover: how much of it the wall takes
+  (under 45% it asks for a bigger wall) and whether the pattern still shows at the size Etsy
+  shows a search result (`tile` in `positions.json`; `drop/wall.py`;
+  `GET /api/mockups/{name}/cover-check`).
+
 ## [0.6.0] — 2026-11-11
 
 ### Added
@@ -696,7 +715,8 @@ Recorded here and in the code so nobody has to re-derive them:
 - There is no idempotency key, so non-idempotent writes are never retried on a timeout
   or a 5xx — a repeat would mean a duplicate listing, or a second email to a buyer.
 
-[Unreleased]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/wj-sidiss/etsy-otomasyon-full-full-surum/compare/v0.4.0...v0.5.0
